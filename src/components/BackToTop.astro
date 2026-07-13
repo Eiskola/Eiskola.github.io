@@ -1,0 +1,54 @@
+<button class="btt" id="btt" aria-label="返回顶部" title="返回顶部">&uarr;</button>
+
+<style>
+  .btt {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-bg);
+    color: var(--color-muted);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 0.25s, transform 0.25s, color 0.15s, border-color 0.15s;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .btt.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .btt:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("btt");
+  if (btn) {
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          btn!.classList.toggle("visible", window.scrollY > 400);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+</script>

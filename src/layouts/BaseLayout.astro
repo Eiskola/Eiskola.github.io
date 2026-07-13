@@ -2,12 +2,6 @@
 import { SITE } from "../consts";
 import Header from "../components/Header.astro";
 import "../styles/global.css";
-
-interface Props {
-  wide?: boolean;
-}
-
-const { wide = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,22 +16,9 @@ const { wide = false } = Astro.props;
     <title>{SITE.title}</title>
   </head>
   <body>
-    <div class={`container ${wide ? "container-wide" : ""}`}>
-      <Header />
-      <main>
-        <slot />
-      </main>
-    </div>
+    <Header />
+    <main>
+      <slot />
+    </main>
   </body>
 </html>
-
-<style>
-  .container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-  }
-
-  .container-wide {
-    max-width: var(--max-width-full);
-  }
-</style>

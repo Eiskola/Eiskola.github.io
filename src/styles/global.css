@@ -36,6 +36,7 @@ html {
   font-size: 17px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -43,6 +44,8 @@ body {
   line-height: var(--line-height);
   color: var(--color-text);
   background: var(--color-bg);
+  max-width: var(--max-width);
+  margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
 }
 

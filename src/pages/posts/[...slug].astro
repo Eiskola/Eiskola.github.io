@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import BackToTop from "../../components/BackToTop.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 
 export async function getStaticPaths() {
@@ -17,7 +18,7 @@ const { post } = Astro.props;
 const { Content, headings } = await render(post);
 ---
 
-<BaseLayout wide>
+<BaseLayout>
   <div class="post-layout">
     <article class="post">
       <header class="post-header">
@@ -47,17 +48,19 @@ const { Content, headings } = await render(post);
       <TableOfContents {headings} />
     </aside>
   </div>
+  <BackToTop />
 </BaseLayout>
 
 <style>
   .post-layout {
-    display: grid;
-    grid-template-columns: var(--max-width) 180px;
-    gap: 2rem;
+    position: relative;
   }
 
-  .post {
-    min-width: 0;
+  .post-sidebar {
+    position: fixed;
+    top: 2rem;
+    left: calc(50% + 390px + 2rem);
+    width: 200px;
   }
 
   .post-header {
@@ -96,12 +99,9 @@ const { Content, headings } = await render(post);
     margin-top: 1.5rem;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     .post-sidebar {
       display: none;
-    }
-    .post-layout {
-      grid-template-columns: 1fr;
     }
   }
 </style>

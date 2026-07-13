@@ -10,12 +10,12 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
 {items.length > 0 && (
-  <nav class="toc">
+  <nav class="toc" id="toc">
     <span class="toc-title">Outline</span>
     <ul>
       {items.map((h) => (
         <li class={`toc-depth-${h.depth}`}>
-          <a href={`#${h.slug}`}>{h.text}</a>
+          <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
         </li>
       ))}
     </ul>
@@ -52,16 +52,80 @@ const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
   }
 
   .toc a {
+    display: block;
     color: var(--color-muted);
     text-decoration: none;
-    transition: color 0.15s;
+    border-left: 2px solid transparent;
+    padding-left: 0.6rem;
+    margin-left: -0.6rem;
+    transition: color 0.15s, border-color 0.15s;
   }
 
   .toc a:hover {
     color: var(--color-accent);
   }
 
+  .toc a.active {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+  }
+
   .toc-depth-3 {
     padding-left: 1rem;
   }
 </style>
+
+<script>
+  function setActive(links: NodeListOf<HTMLAnchorElement>, id: string) {
+    links.forEach((a) => {
+      a.classList.toggle("active", a.dataset.tocLink === id);
+    });
+  }
+
+  function initToc() {
+    const links = document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
+    if (links.length === 0) return;
+
+    const headingIds = Array.from(links).map((a) => a.dataset.tocLink!);
+    const headingEls = headingIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (headingEls.length === 0) return;
+
+    // Click: immediately highlight, observer will confirm/correct on scroll end
+    links.forEach((a) => {
+      a.addEventListener("click", () => {
+        setActive(links, a.dataset.tocLink!);
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let activeId: string | null = null;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeId = entry.target.id;
+            break;
+          }
+        }
+        if (!activeId) {
+          for (let i = headingEls.length - 1; i >= 0; i--) {
+            const rect = headingEls[i].getBoundingClientRect();
+            if (rect.top < window.innerHeight / 2) {
+              activeId = headingEls[i].id;
+              break;
+            }
+          }
+        }
+        if (activeId) setActive(links, activeId);
+      },
+      { rootMargin: "-80px 0px -60% 0px" }
+    );
+
+    headingEls.forEach((el) => observer.observe(el));
+  }
+
+  initToc();
+  document.addEventListener("astro:page-load", initToc);
+</script>
