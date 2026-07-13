@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -13,36 +14,52 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 ---
 
-<BaseLayout>
-  <article class="post">
-    <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <div class="post-meta">
-        <time datetime={post.data.published.toISOString()}>
-          {post.data.published.toLocaleDateString("zh-CN", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })}
-        </time>
-        {post.data.tags.length > 0 && (
-          <span class="post-tags">
-            {post.data.tags.map((tag: string) => <span class="tag">#{tag}</span>)}
-          </span>
-        )}
-      </div>
-    </header>
+<BaseLayout wide>
+  <div class="post-layout">
+    <article class="post">
+      <header class="post-header">
+        <h1>{post.data.title}</h1>
+        <div class="post-meta">
+          <time datetime={post.data.published.toISOString()}>
+            {post.data.published.toLocaleDateString("zh-CN", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })}
+          </time>
+          {post.data.tags.length > 0 && (
+            <span class="post-tags">
+              {post.data.tags.map((tag: string) => <span class="tag">#{tag}</span>)}
+            </span>
+          )}
+        </div>
+      </header>
 
-    <div class="post-body">
-      <Content />
-    </div>
-  </article>
+      <div class="post-body">
+        <Content />
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <TableOfContents {headings} />
+    </aside>
+  </div>
 </BaseLayout>
 
 <style>
+  .post-layout {
+    display: grid;
+    grid-template-columns: var(--max-width) 180px;
+    gap: 2rem;
+  }
+
+  .post {
+    min-width: 0;
+  }
+
   .post-header {
     margin-bottom: 2.5rem;
   }
@@ -77,5 +94,14 @@ const { Content } = await render(post);
 
   .post-body {
     margin-top: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .post-sidebar {
+      display: none;
+    }
+    .post-layout {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
