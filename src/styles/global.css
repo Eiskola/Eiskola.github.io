@@ -207,3 +207,35 @@ th {
   font-family: var(--font-heading);
   font-weight: 600;
 }
+
+/* ── Mobile ─────────────────────────────────── */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.05rem; }
+
+  .expressive-code {
+    margin: 1rem -1rem;
+    border-radius: 0;
+  }
+
+  .adm {
+    border-radius: 0.35rem;
+    padding: 0.75rem 1rem;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}

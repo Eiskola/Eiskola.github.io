@@ -137,4 +137,16 @@ const tags = [...tagMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
     font-size: 0.75rem;
     color: var(--color-muted);
   }
+
+  @media (max-width: 640px) {
+    .year-posts li {
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.5rem 0;
+    }
+
+    .year-posts time {
+      font-size: 0.75rem;
+    }
+  }
 </style>
