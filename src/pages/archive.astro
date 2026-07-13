@@ -1,0 +1,88 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const allPosts = await getCollection("posts");
+const posts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+
+// Group by year
+const byYear: Record<string, typeof posts> = {};
+for (const post of posts) {
+  const year = post.data.published.getFullYear().toString();
+  if (!byYear[year]) byYear[year] = [];
+  byYear[year].push(post);
+}
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<BaseLayout>
+  <article class="archive">
+    <h1>Archive</h1>
+
+    {years.map((year) => (
+      <section class="year-group">
+        <h2>{year}</h2>
+        <ul class="year-posts">
+          {byYear[year].map((post) => (
+            <li>
+              <time datetime={post.data.published.toISOString()}>
+                {post.data.published.toLocaleDateString("zh-CN", {
+                  month: "2-digit",
+                  day: "2-digit",
+                })}
+              </time>
+              <a href={`/posts/${post.id}`}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </article>
+</BaseLayout>
+
+<style>
+  .archive h1 {
+    margin-top: 0;
+  }
+
+  .year-group {
+    margin-top: 2rem;
+  }
+
+  .year-group h2 {
+    font-size: 1.2rem;
+    color: var(--color-muted);
+    margin: 0 0 0.75rem;
+    font-weight: 500;
+  }
+
+  .year-posts {
+    list-style: none;
+    padding: 0;
+  }
+
+  .year-posts li {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.3rem 0;
+  }
+
+  .year-posts time {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .year-posts a {
+    color: var(--color-text);
+  }
+
+  .year-posts a:hover {
+    color: var(--color-accent);
+  }
+</style>
