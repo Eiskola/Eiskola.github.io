@@ -1,0 +1,50 @@
+---
+import { SITE } from "../consts";
+---
+
+<header class="site-header">
+  <a href="/" class="site-title">{SITE.title}</a>
+  <nav>
+    <a href="/">posts</a>
+    <a href="/about">about</a>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  .site-title:hover {
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  nav a {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    color: var(--color-muted);
+  }
+
+  nav a:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+</style>
