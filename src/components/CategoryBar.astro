@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("posts");
+const catMap = new Map<string, number>();
+for (const post of allPosts) {
+  if (post.data.draft) continue;
+  const cat = post.data.category;
+  if (cat) catMap.set(cat, (catMap.get(cat) || 0) + 1);
+}
+const categories = [...catMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+{categories.length > 0 && (
+  <nav class="cat-sidebar">
+    <span class="cat-title">Categories</span>
+    <ul>
+      {categories.map(([cat, count]) => (
+        <li>
+          <a href={`/categories/${cat}`}>
+            {cat}
+            <span class="cat-count">{count}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .cat-sidebar {
+    position: fixed;
+    top: 9rem;
+    left: calc(50% - 400px - 2rem - 160px);
+    width: 160px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .cat-title {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .cat-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cat-sidebar li {
+    margin: 0.25rem 0;
+  }
+
+  .cat-sidebar a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .cat-sidebar a:hover {
+    color: var(--color-accent);
+  }
+
+  .cat-count {
+    font-size: 0.7rem;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 1150px) {
+    .cat-sidebar {
+      display: none;
+    }
+  }
+</style>

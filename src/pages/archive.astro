@@ -20,8 +20,7 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 const tagMap = new Map<string, number>();
 for (const post of posts) {
   for (const tag of post.data.tags) {
-    const key = tag.toLowerCase();
-    tagMap.set(key, (tagMap.get(key) || 0) + 1);
+    tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
   }
 }
 const tags = [...tagMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
@@ -55,7 +54,7 @@ const tags = [...tagMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
     <h2>Tags</h2>
     <div class="tag-cloud">
       {tags.map(([tag, count]) => (
-        <a href={`/tags/${tag.toLowerCase()}`} class="tag-item">
+        <a href={`/tags/${tag}`} class="tag-item">
           <span class="tag-name">#{tag}</span>
           <span class="tag-count">{count}</span>
         </a>

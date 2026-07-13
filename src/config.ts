@@ -26,7 +26,7 @@ export const tocConfig = {
 // ---- 外观 ----
 // 这些值会注入为 CSS 变量，可在 global.css 中覆盖
 export const appearance = {
-  maxWidth: "780px", // 正文区最大宽度
+  maxWidth: "800px", // 正文区最大宽度
   fontSize: "17px", // 基础字号
   colors: {
     bg: "#ffffff",

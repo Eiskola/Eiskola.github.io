@@ -4,30 +4,28 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
-  const tagSet = new Set<string>();
+  const catSet = new Set<string>();
   for (const post of posts) {
     if (post.data.draft) continue;
-    for (const tag of post.data.tags) {
-      tagSet.add(tag);
-    }
+    if (post.data.category) catSet.add(post.data.category);
   }
-  return [...tagSet].map((tag) => ({ params: { tag } }));
+  return [...catSet].map((cat) => ({ params: { category: cat } }));
 }
 
-const { tag } = Astro.params;
+const { category } = Astro.params;
 const allPosts = await getCollection("posts");
 const posts = allPosts
   .filter((p) => !p.data.draft)
-  .filter((p) => p.data.tags.some((t) => t === tag))
+  .filter((p) => p.data.category === category)
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 ---
 
 <BaseLayout>
-  <article class="tag-page">
-    <h1>#{tag}</h1>
-    <p class="tag-subtitle">{posts.length} 篇文章</p>
+  <article class="cat-page">
+    <h1>{category}</h1>
+    <p class="cat-subtitle">{posts.length} 篇文章</p>
 
-    <ul class="tag-posts">
+    <ul class="cat-posts">
       {posts.map((post) => (
         <li>
           <a href={`/posts/${post.id}`}>
@@ -38,7 +36,7 @@ const posts = allPosts
                 day: "2-digit",
               })}
             </time>
-            <span class="post-title">{post.data.title}</span>
+            <span>{post.data.title}</span>
           </a>
         </li>
       ))}
@@ -47,39 +45,39 @@ const posts = allPosts
 </BaseLayout>
 
 <style>
-  .tag-page h1 {
+  .cat-page h1 {
     margin-top: 0;
-    font-family: var(--font-mono);
+    text-transform: capitalize;
   }
 
-  .tag-subtitle {
+  .cat-subtitle {
     color: var(--color-muted);
     font-size: 0.9rem;
     margin: 0.25rem 0 2rem;
   }
 
-  .tag-posts {
+  .cat-posts {
     list-style: none;
     padding: 0;
   }
 
-  .tag-posts li {
+  .cat-posts li {
     margin-bottom: 0.75rem;
   }
 
-  .tag-posts a {
+  .cat-posts a {
     display: flex;
     gap: 1rem;
     align-items: baseline;
     color: var(--color-text);
   }
 
-  .tag-posts a:hover {
+  .cat-posts a:hover {
     color: var(--color-accent);
     text-decoration: none;
   }
 
-  .tag-posts time {
+  .cat-posts time {
     font-family: var(--font-mono);
     font-size: 0.82rem;
     color: var(--color-muted);

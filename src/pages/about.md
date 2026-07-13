@@ -3,7 +3,7 @@ layout: ../layouts/MarkdownLayout.astro
 title: Eiskola.
 ---
 
-计算机科学硕士，关注编程语言、编译器、程序分析等领域。
+硕士，关注编程语言、编译器、程序分析等领域。
 
 ## 研究方向
 

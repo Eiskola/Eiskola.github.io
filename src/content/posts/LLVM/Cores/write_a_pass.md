@@ -3,7 +3,7 @@ title: 如何编写Pass——从LLVM源码角度剖析
 published: 2025-12-13
 description: 本文从LLVM源码的角度，详细剖析了如何去编写一个LLVM Pass，并分析了相关的源码结构和实现细节，帮助深入理解LLVM Pass的调度执行原理。
 image: ./images/cover.png
-tags: [Pass, NPM, llvm]
+tags: [Pass, NPM, LLVM]
 category: LLVM
 draft: false
 ---

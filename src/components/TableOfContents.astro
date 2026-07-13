@@ -7,9 +7,22 @@ interface Props {
 }
 
 const { headings } = Astro.props;
-const items = headings.filter(
-  (h) => h.depth >= tocConfig.minDepth && h.depth <= tocConfig.maxDepth
-);
+
+function cleanHeadingText(text: string): string {
+  // Strip $...$ and $$...$$ math
+  text = text.replace(/\$\$?[^$]+\$\$?/g, "");
+  // Strip leaked KaTeX artifacts: \command{...}, ${...}, \command
+  text = text.replace(/\\[a-z]+\{[^}]*\}/gi, "");
+  text = text.replace(/\$\{[^}]*\}/g, "");
+  text = text.replace(/\\[a-z]+/gi, "");
+  // Collapse whitespace
+  text = text.replace(/\s+/g, " ").trim();
+  return text;
+}
+
+const items = headings
+  .filter((h) => h.depth >= tocConfig.minDepth && h.depth <= tocConfig.maxDepth)
+  .map((h) => ({ ...h, text: cleanHeadingText(h.text) }));
 ---
 
 {items.length > 0 && (

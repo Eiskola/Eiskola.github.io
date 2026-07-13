@@ -17,7 +17,7 @@
   --font-heading: system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
 
-  --max-width: 780px;
+  --max-width: 800px;
   --max-width-full: 1000px;
   --line-height: 1.8;
 }

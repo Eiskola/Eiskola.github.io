@@ -31,6 +31,11 @@ const { Content, headings } = await render(post);
               day: "2-digit",
             })}
           </time>
+          {post.data.category && (
+            <a href={`/categories/${post.data.category}`} class="post-category">
+              {post.data.category}
+            </a>
+          )}
           {post.data.tags.length > 0 && (
             <span class="post-tags">
               {post.data.tags.map((tag: string) => <a href={`/tags/${tag.toLowerCase()}`} class="tag">#{tag}</a>)}
@@ -58,8 +63,8 @@ const { Content, headings } = await render(post);
 
   .post-sidebar {
     position: fixed;
-    top: 2rem;
-    left: calc(50% + 390px + 2rem);
+    top: 9rem;
+    left: calc(50% + 400px + 2rem);
     width: 200px;
   }
 
@@ -81,6 +86,16 @@ const { Content, headings } = await render(post);
     font-family: var(--font-mono);
     font-size: 0.82rem;
     color: var(--color-muted);
+  }
+
+  .post-category {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-accent);
+  }
+
+  .post-category:hover {
+    text-decoration: underline;
   }
 
   .post-tags {

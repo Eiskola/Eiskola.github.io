@@ -3,7 +3,9 @@ import expressiveCode from "astro-expressive-code";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { defineConfig } from "astro/config";
+import rehypeKatex from "rehype-katex";
 import remarkDirective from "remark-directive";
+import remarkMath from "remark-math";
 import { siteConfig, codeBlock } from "./src/config";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge";
 import { rehypeImageCaption } from "./src/plugins/rehype-image-caption";
@@ -13,8 +15,8 @@ import { remarkAdmonition } from "./src/plugins/remark-admonition";
 export default defineConfig({
   site: siteConfig.url,
   markdown: {
-    remarkPlugins: [remarkDirective, remarkAdmonition],
-    rehypePlugins: [rehypeImageCaption],
+    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonition],
+    rehypePlugins: [rehypeKatex, rehypeImageCaption],
   },
   integrations: [
     expressiveCode({
