@@ -10,12 +10,13 @@ import { siteConfig, codeBlock } from "./src/config";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge";
 import { rehypeImageCaption } from "./src/plugins/rehype-image-caption";
 import { remarkAdmonition } from "./src/plugins/remark-admonition";
+import { remarkWikilink } from "./src/plugins/remark-wikilink";
 
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.url,
   markdown: {
-    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonition],
+    remarkPlugins: [remarkWikilink, remarkMath, remarkDirective, remarkAdmonition],
     rehypePlugins: [rehypeKatex, rehypeImageCaption],
   },
   integrations: [
