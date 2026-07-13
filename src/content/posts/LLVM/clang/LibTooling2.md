@@ -2,7 +2,6 @@
 title: LibTooling架构解析（二）：从 FrontendAction 到业务逻辑实现机制
 published: 2026-02-27
 description: 本文详细剖析LibTooling的核心架构，深入分析各组件协作机制与调用时序，帮助读者理解如何基于LibTooling构建自己的Clang工具。。
-image: ./images/cover.png
 tags: [LLVM, Clang, LibTooling]
 category: LLVM
 draft: true

@@ -2,7 +2,6 @@
 title: CRTP：奇异递归模板
 published: 2025-10-08
 description: 一种基于模板继承实现的静态多态模式
-image: ./images/CRTP/cover.png
 tags: [cpp, templates, CRTP]
 category: PL
 draft: false

@@ -2,7 +2,6 @@
 title: using clangd, instead of intellisense
 published: 2025-10-01
 description: how to use clangd in vscode
-image: ./images/vscode+clangd/cover.png
 tags: [tools, clangd, LLVM]
 category: LLVM
 draft: false
