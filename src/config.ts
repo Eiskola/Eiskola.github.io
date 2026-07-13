@@ -7,7 +7,7 @@ export const siteConfig = {
   title: "Alpha | Eiskola",
   description: "Notes on programming languages, compilers, and systems.",
   author: "eiskola",
-  url: "https://eiskola.dev",
+  url: "https://eiskola.site",
 } as const;
 
 // ---- 导航栏 ----
