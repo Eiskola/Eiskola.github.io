@@ -15,6 +15,16 @@ for (const post of posts) {
   byYear[year].push(post);
 }
 const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+
+// Tags
+const tagMap = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    const key = tag.toLowerCase();
+    tagMap.set(key, (tagMap.get(key) || 0) + 1);
+  }
+}
+const tags = [...tagMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 ---
 
 <BaseLayout>
@@ -39,6 +49,18 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
         </ul>
       </section>
     ))}
+
+    <hr />
+
+    <h2>Tags</h2>
+    <div class="tag-cloud">
+      {tags.map(([tag, count]) => (
+        <a href={`/tags/${tag.toLowerCase()}`} class="tag-item">
+          <span class="tag-name">#{tag}</span>
+          <span class="tag-count">{count}</span>
+        </a>
+      ))}
+    </div>
   </article>
 </BaseLayout>
 
@@ -47,14 +69,10 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
     margin-top: 0;
   }
 
-  .year-group {
-    margin-top: 2rem;
-  }
-
-  .year-group h2 {
+  .archive h2 {
     font-size: 1.2rem;
     color: var(--color-muted);
-    margin: 0 0 0.75rem;
+    margin: 2rem 0 0.75rem;
     font-weight: 500;
   }
 
@@ -84,5 +102,40 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 
   .year-posts a:hover {
     color: var(--color-accent);
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.35rem;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .tag-item:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .tag-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .tag-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
   }
 </style>

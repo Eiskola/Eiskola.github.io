@@ -33,7 +33,7 @@ const { Content, headings } = await render(post);
           </time>
           {post.data.tags.length > 0 && (
             <span class="post-tags">
-              {post.data.tags.map((tag: string) => <span class="tag">#{tag}</span>)}
+              {post.data.tags.map((tag: string) => <a href={`/tags/${tag.toLowerCase()}`} class="tag">#{tag}</a>)}
             </span>
           )}
         </div>
@@ -93,6 +93,12 @@ const { Content, headings } = await render(post);
     font-family: var(--font-mono);
     font-size: 0.78rem;
     color: var(--color-muted);
+    transition: color 0.15s;
+  }
+
+  .tag:hover {
+    color: var(--color-accent);
+    text-decoration: none;
   }
 
   .post-body {

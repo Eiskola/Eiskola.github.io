@@ -4,28 +4,29 @@ import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-s
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { defineConfig } from "astro/config";
 import remarkDirective from "remark-directive";
+import { siteConfig, codeBlock } from "./src/config";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge";
 import { rehypeImageCaption } from "./src/plugins/rehype-image-caption";
 import { remarkAdmonition } from "./src/plugins/remark-admonition";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://eiskola.dev",
+  site: siteConfig.url,
   markdown: {
     remarkPlugins: [remarkDirective, remarkAdmonition],
     rehypePlugins: [rehypeImageCaption],
   },
   integrations: [
     expressiveCode({
-      themes: ["github-light"],
+      themes: [codeBlock.theme],
       plugins: [
         pluginCollapsibleSections(),
         pluginLineNumbers(),
         pluginLanguageBadge(),
       ],
       defaultProps: {
-        wrap: true,
-        showLineNumbers: true,
+        wrap: codeBlock.wrap,
+        showLineNumbers: codeBlock.showLineNumbers,
         overridesByLang: {
           shellsession: { showLineNumbers: false },
           bash: { showLineNumbers: false },
