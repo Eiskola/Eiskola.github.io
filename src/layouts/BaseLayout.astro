@@ -15,6 +15,15 @@ import "../styles/global.css";
     <link rel="icon" href="/alpha.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css" />
     <title>{SITE.title}</title>
+    <script is:inline>
+      // Prevent flash of wrong theme — runs before first paint
+      (function () {
+        var theme = localStorage.getItem("theme");
+        if (theme === "warm" || theme === "dark") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+      })();
+    </script>
   </head>
   <body>
     <Header />

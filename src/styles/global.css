@@ -1,4 +1,4 @@
-/* ── Variables ─────────────────────────────── */
+/* ── Theme: Light (pure white, default) ────── */
 :root {
   --color-bg: #ffffff;
   --color-text: #1a1a1a;
@@ -7,11 +7,32 @@
   --color-border: #e5e7eb;
   --color-code-bg: #f3f4f6;
   --color-mark-bg: #fff3cd;
-  --color-mark-border: #e6c34a;
+  --color-mark-border: #ffc107;
   --color-ins-bg: #d4edda;
-  --color-ins-border: #5a9e6f;
+  --color-ins-border: #28a745;
   --color-del-bg: #f8d7da;
-  --color-del-border: #c95b63;
+  --color-del-border: #dc3545;
+
+  /* admonition: note */
+  --color-adm-note-bg: #eef2ff;
+  --color-adm-note-border: #6366f1;
+  --color-adm-note-text: #4f46e5;
+  /* admonition: tip */
+  --color-adm-tip-bg: #ecfdf5;
+  --color-adm-tip-border: #10b981;
+  --color-adm-tip-text: #059669;
+  /* admonition: important */
+  --color-adm-important-bg: #fef9c3;
+  --color-adm-important-border: #eab308;
+  --color-adm-important-text: #a16207;
+  /* admonition: caution */
+  --color-adm-caution-bg: #fef2f2;
+  --color-adm-caution-border: #ef4444;
+  --color-adm-caution-text: #dc2626;
+  /* admonition: warning */
+  --color-adm-warning-bg: #fff7ed;
+  --color-adm-warning-border: #f97316;
+  --color-adm-warning-text: #ea580c;
 
   --font-body: "Palatino Linotype", Palatino, Georgia, "Noto Serif CJK SC", serif;
   --font-heading: system-ui, -apple-system, sans-serif;
@@ -20,6 +41,81 @@
   --max-width: 800px;
   --max-width-full: 1000px;
   --line-height: 1.8;
+
+  color-scheme: light;
+}
+
+/* ── Theme: Warm ────────────────────────────── */
+[data-theme="warm"] {
+  --color-bg: #fdf7ed;
+  --color-text: #3d2e1e;
+  --color-muted: #9b7b5a;
+  --color-accent: #c45d0a;
+  --color-border: #e8d5c0;
+  --color-code-bg: #f5ecdb;
+  --color-mark-bg: #fef0c0;
+  --color-mark-border: #d4a017;
+  --color-ins-bg: #d4f0e0;
+  --color-ins-border: #4a9e6f;
+  --color-del-bg: #fce0e0;
+  --color-del-border: #c95b63;
+
+  /* admonition: note */
+  --color-adm-note-bg: #f2f0fc;
+  --color-adm-note-border: #818cf8;
+  --color-adm-note-text: #4f46e5;
+  /* admonition: tip */
+  --color-adm-tip-bg: #ecfaf2;
+  --color-adm-tip-border: #34d399;
+  --color-adm-tip-text: #059669;
+  /* admonition: important */
+  --color-adm-important-bg: #fef7c0;
+  --color-adm-important-border: #eab308;
+  --color-adm-important-text: #a16207;
+  /* admonition: caution */
+  --color-adm-caution-bg: #fef0ee;
+  --color-adm-caution-border: #f87171;
+  --color-adm-caution-text: #dc2626;
+  /* admonition: warning */
+  --color-adm-warning-bg: #fef4eb;
+  --color-adm-warning-border: #fb923c;
+  --color-adm-warning-text: #ea580c;
+
+  color-scheme: light;
+}
+
+/* ── Theme: Dark ─────────────────────────────  */
+[data-theme="dark"] {
+  --color-bg: #292520;
+  --color-text: #cbc3b6;
+  --color-muted: #9b8e7e;
+  --color-accent: #e8a610;
+  --color-border: #3d3832;
+  --color-code-bg: #302b26;
+  --color-mark-bg: #4a3d1a;
+  --color-mark-border: #b8860b;
+  --color-ins-bg: #1a3d2a;
+  --color-ins-border: #4a9e6f;
+  --color-del-bg: #4a2020;
+  --color-del-border: #c95b63;
+
+  --color-adm-note-bg: #1e1b4b;
+  --color-adm-note-border: #6366f1;
+  --color-adm-note-text: #a5b4fc;
+  --color-adm-tip-bg: #022c22;
+  --color-adm-tip-border: #059669;
+  --color-adm-tip-text: #6ee7b7;
+  --color-adm-important-bg: #3d1f06;
+  --color-adm-important-border: #b45309;
+  --color-adm-important-text: #fcd34d;
+  --color-adm-caution-bg: #450a0a;
+  --color-adm-caution-border: #dc2626;
+  --color-adm-caution-text: #fca5a5;
+  --color-adm-warning-bg: #3d1407;
+  --color-adm-warning-border: #ea580c;
+  --color-adm-warning-text: #fdba74;
+
+  color-scheme: dark;
 }
 
 /* ── Reset ─────────────────────────────────── */
@@ -47,6 +143,7 @@ body {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* ── Typography ────────────────────────────── */
@@ -104,34 +201,34 @@ blockquote {
 }
 
 .adm-note {
-  background: #eef2ff;
-  border-left-color: #6366f1;
+  background: var(--color-adm-note-bg);
+  border-left-color: var(--color-adm-note-border);
 }
-.adm-note .adm-title { color: #4f46e5; }
+.adm-note .adm-title { color: var(--color-adm-note-text); }
 
 .adm-tip {
-  background: #ecfdf5;
-  border-left-color: #10b981;
+  background: var(--color-adm-tip-bg);
+  border-left-color: var(--color-adm-tip-border);
 }
-.adm-tip .adm-title { color: #059669; }
+.adm-tip .adm-title { color: var(--color-adm-tip-text); }
 
 .adm-important {
-  background: #fef9c3;
-  border-left-color: #eab308;
+  background: var(--color-adm-important-bg);
+  border-left-color: var(--color-adm-important-border);
 }
-.adm-important .adm-title { color: #a16207; }
+.adm-important .adm-title { color: var(--color-adm-important-text); }
 
 .adm-caution {
-  background: #fef2f2;
-  border-left-color: #ef4444;
+  background: var(--color-adm-caution-bg);
+  border-left-color: var(--color-adm-caution-border);
 }
-.adm-caution .adm-title { color: #dc2626; }
+.adm-caution .adm-title { color: var(--color-adm-caution-text); }
 
 .adm-warning {
-  background: #fff7ed;
-  border-left-color: #f97316;
+  background: var(--color-adm-warning-bg);
+  border-left-color: var(--color-adm-warning-border);
 }
-.adm-warning .adm-title { color: #ea580c; }
+.adm-warning .adm-title { color: var(--color-adm-warning-text); }
 
 hr {
   border: none;
@@ -158,10 +255,74 @@ code {
   border-radius: 3px;
 }
 
-/* Expressive Code handles block-level code styling.
-   Only set margin here — the rest is in astro.config.mjs */
 .expressive-code {
   margin: 1.25rem 0;
+}
+
+/* ── Code block chrome: warm mode ──────────── */
+/* Override Expressive Code's hardcoded cool-gray frame colors
+   to match the warm palette. */
+
+[data-theme="warm"] .expressive-code {
+  --ec-frm-edTabBarBg: #eadbc8;
+  --ec-frm-edActTabFg: #3d2e1e;
+  --ec-frm-trmTtbBg: #eadbc8;
+  --ec-frm-trmTtbFg: #3d2e1e;
+  --ec-frm-trmTtbDotsFg: #3d2e1e;
+  --ec-frm-inlBtnFg: #3d2e1e;
+  --ec-frm-inlBtnBg: #3d2e1e;
+  --ec-frm-inlBtnBrd: #3d2e1e;
+}
+
+/* ── Code syntax highlighting boost ────────── */
+/* github-light's token colors are inherently muted.
+   Warm mode: subtle contrast + saturation lift.
+   Light mode: EC defaults are fine, no filter.
+   Dark mode: full inversion + hue correction + saturation. */
+
+[data-theme="warm"] .expressive-code pre > code {
+  filter: contrast(1.1) saturate(1.3);
+}
+
+/* ── Code blocks in dark mode ──────────────── */
+/* Syntax highlighting tokens are inverted via filter on <code>.
+   Frame chrome (title bar, tab bar, terminal header) is outside <code>
+   and needs explicit dark overrides. */
+
+[data-theme="dark"] .expressive-code pre > code {
+  filter: invert(1) hue-rotate(180deg) saturate(1.2);
+}
+
+[data-theme="dark"] .expressive-code {
+  /* Editor frame — tab bar behind the title */
+  --ec-frm-edTabBarBg: #2d2a25;
+  --ec-frm-edActTabFg: #c9c0b0;
+  --ec-frm-edActTabBg: var(--color-code-bg);
+
+  /* Terminal frame — title bar */
+  --ec-frm-trmTtbBg: #2d2a25;
+  --ec-frm-trmTtbFg: #c9c0b0;
+  --ec-frm-trmTtbDotsFg: #c9c0b0;
+
+  /* Selection */
+  --ec-uiSelBg: #39414a;
+  --ec-uiSelFg: #c9d1d9;
+
+  /* Scrollbar */
+  --ec-sbThumbCol: #6a737d33;
+  --ec-sbThumbHoverCol: #6a737d44;
+
+  /* Focus ring */
+  --ec-focusBrd: #1f6feb;
+
+  /* Inline buttons (copy) — rendered over <pre>, outside <code> */
+  --ec-frm-inlBtnFg: #c9d1d9;
+  --ec-frm-inlBtnBg: #c9d1d9;
+  --ec-frm-inlBtnBrd: #c9d1d9;
+
+  /* Shadow & tooltip */
+  --ec-frm-shdCol: #00000060;
+  --ec-frm-tooltipSuccessBg: #238636;
 }
 
 /* ── Images ────────────────────────────────── */
