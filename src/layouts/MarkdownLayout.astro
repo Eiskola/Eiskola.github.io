@@ -4,7 +4,7 @@ import BaseLayout from "./BaseLayout.astro";
 const { frontmatter } = Astro.props;
 ---
 
-<BaseLayout>
+<BaseLayout pageTitle={frontmatter.title}>
   <article class="md-page">
     <h1>{frontmatter.title}</h1>
     <div class="md-body">

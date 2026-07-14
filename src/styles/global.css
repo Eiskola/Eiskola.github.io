@@ -42,6 +42,16 @@
   --max-width-full: 1000px;
   --line-height: 1.8;
 
+  /* Pagefind UI */
+  --pagefind-ui-scale: 1;
+  --pagefind-ui-primary: var(--color-accent);
+  --pagefind-ui-text: var(--color-text);
+  --pagefind-ui-background: var(--color-bg);
+  --pagefind-ui-border: var(--color-border);
+  --pagefind-ui-font: var(--font-body);
+  --pagefind-ui-border-radius: 0.35rem;
+  --pagefind-ui-image-border-radius: 0.25rem;
+
   color-scheme: light;
 }
 
@@ -157,6 +167,36 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: 1.8rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.15rem; }
+
+/* Heading anchor — show # on hover */
+h1, h2, h3, h4, h5, h6 {
+  position: relative;
+}
+
+.heading-anchor {
+  position: absolute;
+  left: -1.1em;
+  color: var(--color-muted);
+  opacity: 0;
+  font-weight: 400;
+  font-size: 0.85em;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.heading-anchor:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+h1:hover .heading-anchor,
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+h4:hover .heading-anchor,
+h5:hover .heading-anchor,
+h6:hover .heading-anchor {
+  opacity: 1;
+}
 
 p {
   margin: 0.75rem 0;
@@ -410,5 +450,15 @@ th {
     overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .katex-display > .katex {
+    white-space: nowrap;
   }
 }

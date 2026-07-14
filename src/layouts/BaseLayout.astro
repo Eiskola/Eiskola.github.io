@@ -3,7 +3,19 @@ import { SITE } from "../consts";
 import CategoryBar from "../components/CategoryBar.astro";
 import Header from "../components/Header.astro";
 import ImageLightbox from "../components/ImageLightbox.astro";
+import ScrollProgress from "../components/ScrollProgress.astro";
 import "../styles/global.css";
+
+interface Props {
+  pageTitle?: string;
+  pageDescription?: string;
+}
+
+const { pageTitle, pageDescription } = Astro.props;
+
+const title = pageTitle ? `${pageTitle} | ${SITE.title}` : SITE.title;
+const description = pageDescription || SITE.description;
+const url = new URL(Astro.url.pathname, SITE.url).href;
 ---
 
 <!doctype html>
@@ -11,11 +23,25 @@ import "../styles/global.css";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={SITE.description} />
+    <meta name="description" content={description} />
     <meta name="author" content={SITE.author} />
     <link rel="icon" href="/alpha.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css" />
-    <title>{SITE.title}</title>
+    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:type" content={pageTitle ? "article" : "website"} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:locale" content="zh_CN" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <script is:inline>
       // Prevent flash of wrong theme — runs before first paint
       (function () {
@@ -27,6 +53,7 @@ import "../styles/global.css";
     </script>
   </head>
   <body>
+    <ScrollProgress />
     <Header />
     <CategoryBar />
     <main>

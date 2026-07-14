@@ -22,7 +22,7 @@ const posts = allPosts
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 ---
 
-<BaseLayout>
+<BaseLayout pageTitle={`标签：#${tag}`}>
   <article class="tag-page">
     <h1>#{tag}</h1>
     <p class="tag-subtitle">{posts.length} 篇文章</p>

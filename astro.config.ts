@@ -2,6 +2,7 @@
 import expressiveCode from "astro-expressive-code";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 import rehypeKatex from "rehype-katex";
 import remarkDirective from "remark-directive";
@@ -20,6 +21,7 @@ export default defineConfig({
     rehypePlugins: [rehypeKatex, rehypeImageCaption],
   },
   integrations: [
+    sitemap(),
     expressiveCode({
       themes: [codeBlock.theme],
       plugins: [

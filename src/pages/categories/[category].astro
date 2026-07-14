@@ -20,7 +20,7 @@ const posts = allPosts
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 ---
 
-<BaseLayout>
+<BaseLayout pageTitle={`分类：${category}`}>
   <article class="cat-page">
     <h1>{category}</h1>
     <p class="cat-subtitle">{posts.length} 篇文章</p>

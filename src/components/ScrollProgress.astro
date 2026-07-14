@@ -1,0 +1,30 @@
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<style>
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2.5px;
+    background: var(--color-accent);
+    z-index: 9998;
+    width: 0%;
+    transition: width 0.1s linear;
+    border-radius: 0 1px 1px 0;
+  }
+</style>
+
+<script>
+  function updateProgress() {
+    const bar = document.getElementById("scroll-progress");
+    if (!bar) return;
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+    bar.style.width = pct + "%";
+  }
+
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("resize", updateProgress, { passive: true });
+  document.addEventListener("astro:page-load", updateProgress);
+</script>

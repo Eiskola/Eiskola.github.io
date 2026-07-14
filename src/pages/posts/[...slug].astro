@@ -16,9 +16,21 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
+
+// Reading time: ~400 chars/min for mixed Chinese/English
+const charCount = (post.body || "").replace(/\s+/g, "").length;
+const readingTime = Math.max(1, Math.round(charCount / 400));
+
+// Build sorted post list for prev/next navigation
+const allPosts = (await getCollection("posts"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+const currentIdx = allPosts.findIndex((p) => p.id === post.id);
+const prevPost = currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null; // older
+const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
 ---
 
-<BaseLayout>
+<BaseLayout pageTitle={post.data.title} pageDescription={post.data.description}>
   <div class="post-layout">
     <article class="post">
       <header class="post-header">
@@ -31,6 +43,7 @@ const { Content, headings } = await render(post);
               day: "2-digit",
             })}
           </time>
+          <span class="post-reading-time">{readingTime} min read</span>
           {post.data.category && (
             <a href={`/categories/${post.data.category}`} class="post-category">
               {post.data.category}
@@ -47,6 +60,23 @@ const { Content, headings } = await render(post);
       <div class="post-body">
         <Content />
       </div>
+
+      {(prevPost || nextPost) && (
+        <nav class="post-nav">
+          {prevPost ? (
+            <a href={`/posts/${prevPost.id}`} class="post-nav-link prev">
+              <span class="post-nav-label">&larr; Previous</span>
+              <span class="post-nav-title">{prevPost.data.title}</span>
+            </a>
+          ) : <span />}
+          {nextPost ? (
+            <a href={`/posts/${nextPost.id}`} class="post-nav-link next">
+              <span class="post-nav-label">Next &rarr;</span>
+              <span class="post-nav-title">{nextPost.data.title}</span>
+            </a>
+          ) : <span />}
+        </nav>
+      )}
     </article>
 
     <aside class="post-sidebar">
@@ -55,6 +85,20 @@ const { Content, headings } = await render(post);
   </div>
   <BackToTop />
 </BaseLayout>
+
+<script>
+  // Inject heading anchor links
+  document.querySelectorAll(".post-body h1, .post-body h2, .post-body h3, .post-body h4, .post-body h5, .post-body h6").forEach((h) => {
+    if (!h.id) return;
+    if (h.querySelector(".heading-anchor")) return; // already injected
+    const a = document.createElement("a");
+    a.className = "heading-anchor";
+    a.href = `#${h.id}`;
+    a.setAttribute("aria-label", "Link to this heading");
+    a.textContent = "#";
+    h.prepend(a);
+  });
+</script>
 
 <style>
   .post-layout {
@@ -88,6 +132,12 @@ const { Content, headings } = await render(post);
     color: var(--color-muted);
   }
 
+  .post-reading-time {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-muted);
+  }
+
   .post-category {
     font-family: var(--font-mono);
     font-size: 0.78rem;
@@ -118,6 +168,82 @@ const { Content, headings } = await render(post);
 
   .post-body {
     margin-top: 1.5rem;
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.35rem;
+    color: var(--color-text);
+    transition: border-color 0.15s;
+  }
+
+  .post-nav-link:hover {
+    border-color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-nav-link.prev {
+    align-items: flex-start;
+  }
+
+  .post-nav-link.next {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .post-nav-label {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+  }
+
+  .post-nav-title {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    .post-nav-link.next {
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .post-nav-title {
+      font-size: 0.85rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .post-header h1 {
+      font-size: 1.4rem;
+    }
+
+    .post-meta {
+      gap: 0.5rem;
+      font-size: 0.78rem;
+    }
   }
 
   @media (max-width: 1100px) {

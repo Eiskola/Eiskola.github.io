@@ -66,4 +66,16 @@ const { posts } = Astro.props;
     white-space: nowrap;
     flex-shrink: 0;
   }
+
+  @media (max-width: 480px) {
+    .post-link {
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.5rem 0;
+    }
+
+    .post-date {
+      font-size: 0.75rem;
+    }
+  }
 </style>

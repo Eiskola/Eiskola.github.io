@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout pageTitle="Search">
+  <div class="search-page">
+    <h1>Search</h1>
+    <div id="search" class="search-box"></div>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-page h1 {
+    margin-top: 0;
+  }
+
+  .search-box {
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .search-box {
+      margin-top: 1rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Load Pagefind — is:inline avoids Astro bundling so the runtime path works
+  (async function () {
+    try {
+      var s = document.createElement("script");
+      s.src = "/pagefind/pagefind-ui.js";
+      s.onload = function () {
+        // @ts-ignore
+        new PagefindUI({
+          element: "#search",
+          baseUrl: "/",
+          showImages: false,
+        });
+      };
+      s.onerror = function () {
+        var el = document.getElementById("search");
+        el.innerHTML =
+          '<p style="color:var(--color-muted);line-height:1.8">' +
+          'Search index not found. The search index is generated during the production build.<br>' +
+          'Run <code>npm run build</code> then <code>npm run preview</code> to test locally.' +
+          '</p>';
+      };
+      document.head.appendChild(s);
+      // Load Pagefind CSS
+      var l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = "/pagefind/pagefind-ui.css";
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+</script>
