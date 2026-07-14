@@ -342,6 +342,18 @@ img {
   margin: 0 auto;
 }
 
+/* All content images: click-to-zoom hint */
+.post-body img,
+.img-figure img {
+  cursor: zoom-in;
+  transition: opacity 0.15s;
+}
+
+.post-body img:hover,
+.img-figure img:hover {
+  opacity: 0.9;
+}
+
 .img-caption {
   display: block;
   margin-top: 0.5rem;

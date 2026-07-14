@@ -1,0 +1,108 @@
+<!-- Image lightbox: click any .img-figure img to view full-size -->
+<div class="img-lightbox" id="img-lightbox" aria-hidden="true">
+  <div class="img-lightbox-bg"></div>
+  <button class="img-lightbox-close" aria-label="关闭">&times;</button>
+  <img class="img-lightbox-img" id="img-lightbox-img" alt="" />
+</div>
+
+<style>
+  .img-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .img-lightbox.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .img-lightbox-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .img-lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+
+  .img-lightbox-close:hover {
+    opacity: 1;
+  }
+
+  .img-lightbox-img {
+    position: relative;
+    z-index: 1;
+    max-width: 92vw;
+    max-height: 92vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+    cursor: zoom-out;
+  }
+</style>
+
+<script>
+  function initLightbox() {
+    const lightbox = document.getElementById("img-lightbox");
+    const img = document.getElementById("img-lightbox-img") as HTMLImageElement;
+    if (!lightbox || !img) return;
+
+    function open(src: string, alt: string) {
+      img.src = src;
+      img.alt = alt;
+      lightbox!.classList.add("open");
+      lightbox!.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      lightbox!.classList.remove("open");
+      lightbox!.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    // Click on any image in post body or img-figure to open lightbox
+    document.querySelectorAll(".post-body img, .img-figure img").forEach((el) => {
+      (el as HTMLElement).style.cursor = "zoom-in";
+      el.addEventListener("click", () => {
+        const src = (el as HTMLImageElement).src;
+        const alt = (el as HTMLImageElement).alt;
+        open(src, alt);
+      });
+    });
+
+    // Click backdrop or close button to dismiss
+    lightbox.querySelector(".img-lightbox-bg")?.addEventListener("click", close);
+    lightbox.querySelector(".img-lightbox-close")?.addEventListener("click", close);
+    img.addEventListener("click", close);
+
+    // Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lightbox.classList.contains("open")) {
+        close();
+      }
+    });
+  }
+
+  initLightbox();
+  document.addEventListener("astro:page-load", initLightbox);
+</script>

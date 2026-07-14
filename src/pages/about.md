@@ -17,4 +17,4 @@ title: Eiskola.
 
 ## 关于本站
 
-基于 [Astro](https://astro.build) 构建，主题 Alpha 为自研极简学术风格。
+基于 [Astro](https://astro.build) 构建，主题 Alpha 为原创极简学术风格。

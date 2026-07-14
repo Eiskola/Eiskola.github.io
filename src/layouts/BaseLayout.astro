@@ -2,6 +2,7 @@
 import { SITE } from "../consts";
 import CategoryBar from "../components/CategoryBar.astro";
 import Header from "../components/Header.astro";
+import ImageLightbox from "../components/ImageLightbox.astro";
 import "../styles/global.css";
 ---
 
@@ -31,5 +32,6 @@ import "../styles/global.css";
     <main>
       <slot />
     </main>
+    <ImageLightbox />
   </body>
 </html>
