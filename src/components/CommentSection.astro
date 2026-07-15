@@ -1,0 +1,115 @@
+---
+import { giscus } from "../config";
+---
+
+<div class="comments-section" id="comments">
+  <h2 class="comments-heading">Comments</h2>
+  <div class="giscus"></div>
+</div>
+
+<script
+  id="giscus-script"
+  src="https://giscus.app/client.js"
+  data-repo={giscus.repo}
+  data-repo-id={giscus.repoId}
+  data-category={giscus.category}
+  data-category-id={giscus.categoryId}
+  data-mapping={giscus.mapping}
+  data-reactions-enabled={giscus.reactionsEnabled}
+  data-emit-metadata={giscus.emitMetadata}
+  data-input-position={giscus.inputPosition}
+  data-theme="light"
+  data-lang={giscus.lang}
+  crossorigin="anonymous"
+  async
+></script>
+
+<!--
+  is:inline 同步执行，在 Giscus async 脚本下载完成前修改 data-theme。
+  自定义 CSS 文件位于 /public/giscus/，通过 Giscus 的 <link> 加载，
+  每个主题独立对应一个 CSS 文件。
+-->
+<script is:inline>
+  (function () {
+    var theme = document.documentElement.getAttribute("data-theme") || "light";
+    var s = document.getElementById("giscus-script");
+    if (s) s.setAttribute("data-theme", location.origin + "/giscus/" + theme + ".css");
+  })();
+</script>
+
+<script>
+  function detectTheme(): string {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+
+  function sendTheme(): void {
+    var iframe = document.querySelector<HTMLIFrameElement>(
+      ".giscus-frame, .giscus iframe",
+    );
+    if (!iframe?.contentWindow) return;
+    var theme = detectTheme();
+    iframe.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: location.origin + "/giscus/" + theme + ".css" } } },
+      "https://giscus.app",
+    );
+  }
+
+  var lastTheme = detectTheme();
+
+  // MutationObserver — data-theme 变化
+  new MutationObserver(function () {
+    var t = detectTheme();
+    if (t !== lastTheme) { lastTheme = t; sendTheme(); }
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+
+  // MutationObserver — Giscus iframe 出现
+  var container = document.querySelector(".giscus");
+  if (container) {
+    new MutationObserver(function () {
+      if (document.querySelector(".giscus-frame, .giscus iframe")) sendTheme();
+    }).observe(container, { childList: true, subtree: true });
+  }
+
+  // Giscus loaded → 确认主题
+  window.addEventListener("message", function (e) {
+    if (e.origin === "https://giscus.app" && e.data?.giscus) sendTheme();
+  });
+
+  setTimeout(sendTheme, 2000);
+</script>
+
+<style>
+  .comments-section {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    transition: border-color 0.3s;
+  }
+
+  .comments-heading {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 1.25rem;
+    color: var(--color-text);
+    transition: color 0.3s;
+  }
+
+  .giscus {
+    min-height: 200px;
+  }
+
+  @media (max-width: 640px) {
+    .comments-section {
+      margin-top: 2rem;
+      padding-top: 1rem;
+    }
+    .comments-heading {
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+  }
+</style>

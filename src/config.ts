@@ -44,6 +44,21 @@ export const appearance = {
   },
 } as const;
 
+// ---- 评论 (Giscus) ----
+// 在 GitHub 仓库启用 Discussions 并安装 Giscus App 后，
+// 访问 https://giscus.app 获取 repo-id 和 category-id
+export const giscus = {
+  repo: "Eiskola/Eiskola.github.io" as const,
+  repoId: "R_kgDOTW-afw",           // ← 替换
+  category: "Announcements" as const,
+  categoryId: "DIC_kwDOTW-af84DBPCP",   // ← 替换
+  mapping: "pathname" as const,
+  reactionsEnabled: "1" as const,
+  emitMetadata: "0" as const,
+  inputPosition: "top" as const,
+  lang: "zh-CN" as const,
+} as const;
+
 // ---- 代码块 ----
 export const codeBlock = {
   theme: "github-light" as const, // Shiki/Expressive Code 主题

@@ -1,0 +1,166 @@
+/* Giscus custom theme: Dark — 匹配站点 [data-theme="dark"] */
+
+main {
+  --primary-default: #e8a610;
+  --primary-emphasis: #f0b820;
+
+  --color-prettylights-syntax-comment: #9b8e7e;
+  --color-prettylights-syntax-constant: #e0c080;
+  --color-prettylights-syntax-entity: #b392f0;
+  --color-prettylights-syntax-storage-modifier-import: #cbc3b6;
+  --color-prettylights-syntax-entity-tag: #7bc47f;
+  --color-prettylights-syntax-keyword: #f97583;
+  --color-prettylights-syntax-string: #c4a87c;
+  --color-prettylights-syntax-variable: #f0b820;
+  --color-prettylights-syntax-brackethighlighter-unmatched: #f97583;
+  --color-prettylights-syntax-invalid-illegal-text: #292520;
+  --color-prettylights-syntax-invalid-illegal-bg: #f97583;
+  --color-prettylights-syntax-carriage-return-text: #292520;
+  --color-prettylights-syntax-carriage-return-bg: #f97583;
+  --color-prettylights-syntax-string-regexp: #7bc47f;
+  --color-prettylights-syntax-markup-list: #cbc3b6;
+  --color-prettylights-syntax-markup-heading: #e0c080;
+  --color-prettylights-syntax-markup-italic: #cbc3b6;
+  --color-prettylights-syntax-markup-bold: #cbc3b6;
+  --color-prettylights-syntax-markup-deleted-text: #fca5a5;
+  --color-prettylights-syntax-markup-deleted-bg: #4a2020;
+  --color-prettylights-syntax-markup-inserted-text: #6ee7b7;
+  --color-prettylights-syntax-markup-inserted-bg: #1a3d2a;
+  --color-prettylights-syntax-markup-changed-text: #fdba74;
+  --color-prettylights-syntax-markup-changed-bg: #4a3d1a;
+  --color-prettylights-syntax-markup-ignored-text: #9b8e7e;
+  --color-prettylights-syntax-markup-ignored-bg: #e0c080;
+  --color-prettylights-syntax-meta-diff-range: #b392f0;
+  --color-prettylights-syntax-brackethighlighter-angle: #9b8e7e;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #7a7060;
+  --color-prettylights-syntax-constant-other-reference-link: #c4a87c;
+
+  --color-btn-primary-bg: #e8a610;
+  --color-btn-primary-text: #292520;
+  --color-btn-primary-border: #e8a610;
+  --color-btn-primary-hover-bg: #f0b820;
+  --color-btn-primary-hover-border: #f0b820;
+  --color-btn-primary-selected-bg: #f0b820;
+
+  --btnPrimary-bg: #e8a610;
+  --btnPrimary-text: #292520;
+  --btnPrimary-border: #e8a610;
+  --btnPrimary-hoverBg: #f0b820;
+
+  --color-btn-bg: #302b26;
+  --color-btn-text: #cbc3b6;
+  --color-btn-border: #3d3832;
+  --color-btn-hover-bg: #3d3832;
+  --color-btn-hover-border: #4a443e;
+
+  --btn-bg: #302b26;
+  --btn-text: #cbc3b6;
+  --btn-border: #3d3832;
+  --btn-hoverBg: #3d3832;
+
+  /* 评论输入框 */
+  --color-input-bg: #302b26;
+  --color-input-text: #cbc3b6;
+  --color-input-border: #3d3832;
+  --color-input-placeholder: #7a7060;
+
+  --input-bg: #302b26;
+  --input-text: #cbc3b6;
+  --input-border: #3d3832;
+  --input-placeholder: #7a7060;
+
+  --color-fg-default: #cbc3b6;
+  --color-fg-muted: #9b8e7e;
+  --color-fg-subtle: #7a7060;
+  --color-fg-on-emphasis: #292520;
+
+  /* Giscus/Primer 实际使用的变量命名（无 color- 前缀，无 camelCase） */
+  --bg-default: #292520;
+  --bg-overlay: #302b26;
+  --bg-subtle: #24211c;
+  --bg-inset: #1e1b17;
+
+  --fg-default: #cbc3b6;
+  --fg-muted: #9b8e7e;
+  --fg-subtle: #7a7060;
+  --fg-onEmphasis: #292520;
+
+  --border-default: #3d3832;
+  --border-muted: #3d3832;
+  --border-subtle: #302b26;
+
+  /* Primer 旧版变量命名 */
+  --color-fg-default: #cbc3b6;
+  --fgColor-muted: #9b8e7e;
+  --fgColor-subtle: #7a7060;
+  --fgColor-onEmphasis: #292520;
+  --fgColor-accent: #e8a610;
+  --fgColor-danger: #f97583;
+  --fgColor-done: #b392f0;
+  --fgColor-attention: #e8a610;
+
+  --color-canvas-default: #292520;
+  --color-canvas-overlay: #292520;
+  --color-canvas-subtle: #24211c;
+  --color-canvas-inset: #1e1b17;
+
+  --bgColor-default: #292520;
+  --bgColor-muted: #24211c;
+  --bgColor-subtle: #24211c;
+  --bgColor-inset: #1e1b17;
+  --bgColor-overlay: #302b26;
+
+  --color-border-default: #3d3832;
+  --color-border-muted: #3d3832;
+  --color-border-subtle: #302b26;
+
+  --borderColor-default: #3d3832;
+  --borderColor-muted: #3d3832;
+  --borderColor-subtle: #302b26;
+
+  --color-neutral-muted: #3d3832;
+  --color-neutral-subtle: #24211c;
+
+  --color-accent-fg: #e8a610;
+  --color-accent-emphasis: #e8a610;
+  --color-accent-muted: #4a3d1a;
+  --color-accent-subtle: #3d3210;
+
+  --color-danger-fg: #f97583;
+  --color-danger-emphasis: #f97583;
+
+  --color-attention-fg: #e8a610;
+  --color-attention-emphasis: #e8a610;
+  --color-attention-subtle: #4a3d1a;
+
+  --color-done-fg: #b392f0;
+  --color-done-emphasis: #b392f0;
+
+  --color-sponsors-bg: #292520;
+
+  /* ── Emoji reaction picker & popover overlays ── */
+  --color-scale-white: #292520;
+  --color-scale-gray-0: #24211c;
+  --color-scale-gray-1: #302b26;
+  --color-scale-gray-2: #3d3832;
+  --color-scale-gray-3: #4a443e;
+  --color-scale-gray-4: #6b6358;
+  --color-scale-gray-5: #9b8e7e;
+  --color-scale-gray-6: #b5a894;
+  --color-scale-gray-7: #cbc3b6;
+  --color-scale-gray-8: #dad4c8;
+  --color-scale-gray-9: #e8e2d6;
+
+  --color-overlay-backdrop-bg: rgba(0, 0, 0, 0.3);
+  --color-select-menu-bg: #302b26;
+  --color-select-menu-border: #3d3832;
+  --color-select-menu-item-hover-bg: #3d3832;
+  --color-select-menu-item-active-bg: #3d3210;
+
+  --color-popover-bg: #302b26;
+  --color-popover-border: #3d3832;
+  --color-popover-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  --color-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --color-shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.25);
+}

@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
+import CommentSection from "../../components/CommentSection.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -83,6 +84,7 @@ const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
       <TableOfContents {headings} />
     </aside>
   </div>
+  <CommentSection />
   <BackToTop />
 </BaseLayout>
 
