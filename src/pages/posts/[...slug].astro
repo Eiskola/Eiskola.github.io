@@ -27,8 +27,20 @@ const allPosts = (await getCollection("posts"))
   .filter((p) => !p.data.draft)
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 const currentIdx = allPosts.findIndex((p) => p.id === post.id);
-const prevPost = currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null; // older
-const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
+const prevPost = currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null;
+const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null;
+
+// Related posts by tag overlap (max 3)
+const relatedPosts = allPosts
+  .filter((p) => p.id !== post.id)
+  .map((p) => ({
+    post: p,
+    overlap: p.data.tags.filter((t: string) => post.data.tags.includes(t)).length,
+  }))
+  .filter((r) => r.overlap > 0)
+  .sort((a, b) => b.overlap - a.overlap)
+  .slice(0, 3)
+  .map((r) => r.post);
 ---
 
 <BaseLayout pageTitle={post.data.title} pageDescription={post.data.description}>
@@ -44,6 +56,11 @@ const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
               day: "2-digit",
             })}
           </time>
+          {post.data.updated && (
+            <span class="post-updated">
+              updated {post.data.updated.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })}
+            </span>
+          )}
           <span class="post-reading-time">{readingTime} min read</span>
           {post.data.category && (
             <a href={`/categories/${post.data.category}`} class="post-category">
@@ -77,6 +94,24 @@ const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
             </a>
           ) : <span />}
         </nav>
+      )}
+
+      {relatedPosts.length > 0 && (
+        <section class="related-posts">
+          <h2 class="related-heading">Related</h2>
+          <ul class="related-list">
+            {relatedPosts.map((rp) => (
+              <li>
+                <a href={`/posts/${rp.id}`}>{rp.data.title}</a>
+                <span class="related-tags">
+                  {rp.data.tags
+                    .filter((t: string) => post.data.tags.includes(t))
+                    .map((t: string) => <span class="related-tag">#{t}</span>)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </article>
 
@@ -251,6 +286,78 @@ const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null; // newer
   @media (max-width: 1100px) {
     .post-sidebar {
       display: none;
+    }
+  }
+
+  /* ── Updated date ── */
+  .post-updated {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  /* ── Related posts ── */
+  .related-posts {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    transition: border-color 0.3s;
+  }
+
+  .related-heading {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    margin: 0 0 1rem;
+  }
+
+  .related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .related-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .related-list a {
+    font-size: 0.92rem;
+    color: var(--color-accent);
+  }
+
+  .related-list a:hover {
+    text-decoration: underline;
+  }
+
+  .related-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .related-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+
+  @media (max-width: 640px) {
+    .related-posts {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+    }
+
+    .related-list a {
+      font-size: 0.88rem;
     }
   }
 </style>
