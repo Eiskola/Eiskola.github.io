@@ -1,9 +1,9 @@
-import type { Root, Element, Text } from "hast";
+import type { Root, Element, ElementContent, Text } from "hast";
 import { visit } from "unist-util-visit";
 
 function isOnlyImageChild(parent: Element): boolean {
   const meaningful = parent.children.filter(
-    (c) => !(c.type === "text" && /^\s*$/.test((c as Text).value))
+    (c: ElementContent) => !(c.type === "text" && /^\s*$/.test((c as Text).value))
   );
   return meaningful.length === 1 && (meaningful[0] as Element).tagName === "img";
 }

@@ -21,6 +21,11 @@ export default defineConfig({
     remarkPlugins: [remarkWikilink, remarkMath, remarkDirective, remarkAdmonition, remarkFootnotes],
     rehypePlugins: [rehypeKatex, rehypeImageCaption],
   },
+  // Allow Giscus iframe (giscus.app) to fetch custom theme CSS from dev server.
+  // Astro's sec-fetch middleware blocks cross-site subresource requests by default.
+  security: {
+    allowedDomains: [{ origin: "https://giscus.app" }],
+  },
   integrations: [
     sitemap(),
     expressiveCode({
