@@ -8,25 +8,25 @@ draft: false
 ---
 
 ## what is clangd?
-&emsp;&emsp;如果你使用 llvm/clang 工具链开发 C/C++ 项目，那么对 **clangd** 应该不会陌生。这里不对 llvm/clang 工具链做过多介绍，但是 clangd 值得一提。
+如果你使用 llvm/clang 工具链开发 C/C++ 项目，那么对 **clangd** 应该不会陌生。这里不对 llvm/clang 工具链做过多介绍，但是 clangd 值得一提。
 
-&emsp;&emsp;clangd 作为 llvm/clang 生态下的核心工具之一，主要用于为 C/C++ 提供语言服务器协议（LSP，language Server Protocol）支持，如代码补全、语法检查、代码导航或跳转等功能。clangd 通过解析代码结构，理解代码语义，提供更智能的代码分析和建议。
+clangd 作为 llvm/clang 生态下的核心工具之一，主要用于为 C/C++ 提供语言服务器协议（LSP，language Server Protocol）支持，如代码补全、语法检查、代码导航或跳转等功能。clangd 通过解析代码结构，理解代码语义，提供更智能的代码分析和建议。
 
 ## why clangd?
-&emsp;&emsp;有过 clion 和 vscode 开发 C/C++ 经验的同学应该有所感触，当从 clion 切换到 vscode 进行开发时，往往会觉得 vscode 的代码补全、语法检查等功能不如 clion 智能。vscode 默认使用的 **intellisense** 特别是在针对较大项目代码的分析上，不够精确、高效，有时甚至会出现误报的情况，而基于 clangd 的 clion 却能够带来更好的体验。那 vscode+intellisense 只能是唯一选择了吗？
+有过 clion 和 vscode 开发 C/C++ 经验的同学应该有所感触，当从 clion 切换到 vscode 进行开发时，往往会觉得 vscode 的代码补全、语法检查等功能不如 clion 智能。vscode 默认使用的 **intellisense** 特别是在针对较大项目代码的分析上，不够精确、高效，有时甚至会出现误报的情况，而基于 clangd 的 clion 却能够带来更好的体验。那 vscode+intellisense 只能是唯一选择了吗？
 
-&emsp;&emsp;实际上，llvm 团队开发了 clangd 插件供vscode环境使用，但为什么不禁用 intellisense，转而拥抱 clangd 呢？我想 clangd 无法做到开箱即用成为这唯一的阻碍。本文将介绍如何在 vscode 中使用 clangd。
+实际上，llvm 团队开发了 clangd 插件供vscode环境使用，但为什么不禁用 intellisense，转而拥抱 clangd 呢？我想 clangd 无法做到开箱即用成为这唯一的阻碍。本文将介绍如何在 vscode 中使用 clangd。
 
 ![clangd plugin](./images/vscode+clangd/image1.png)
 
 ## how to use clangd in vscode?
-&emsp;&emsp;下面介绍如何在 vscode 中配置并使用 clangd。
+下面介绍如何在 vscode 中配置并使用 clangd。
 
 ### 1. 安装 clangd
-&emsp;&emsp;clangd 的安装方式多样，可以通过包管理器安装，也可以从 llvm 官网下载预编译的二进制文件，或从源码编译安装。
+clangd 的安装方式多样，可以通过包管理器安装，也可以从 llvm 官网下载预编译的二进制文件，或从源码编译安装。
 
 #### 源码编译安装
-&emsp;&emsp;如果你尚未安装 llvm/clang 工具链，而有心尝试，推荐从源码直接编译安装clangd，这样可以获取**严格匹配的版本**。以下是简要步骤：
+如果你尚未安装 llvm/clang 工具链，而有心尝试，推荐从源码直接编译安装clangd，这样可以获取**严格匹配的版本**。以下是简要步骤：
 ```bash
 # 假设已经克隆好llvm项目源码（这里以20.1.5版本为例）
 cd llvm-project
@@ -53,7 +53,7 @@ source ~/.bashrc
 :::
 
 #### 通过包管理器安装
-&emsp;&emsp;如果已经安装了 llvm/clang 工具链，但编译时并没有包含 clangd，可以通过包管理器按照，但是要安装与 llvm/clang 相匹配的版本。以下是简要步骤：
+如果已经安装了 llvm/clang 工具链，但编译时并没有包含 clangd，可以通过包管理器按照，但是要安装与 llvm/clang 相匹配的版本。以下是简要步骤：
 ```bash
 sudo apt update
 sudo apt install clangd-20 # 以20版本为例
@@ -64,7 +64,7 @@ sudo ln -s /usr/bin/clangd-20 /usr/local/llvm-20.1.5/bin/clangd
 ```
 
 #### 验证安装
-&emsp;&emsp;安装完成后，可以通过下面命令验证是否安装成功：
+安装完成后，可以通过下面命令验证是否安装成功：
 ```bash
 clangd --version
 ```
@@ -72,13 +72,13 @@ clangd --version
 
 ### 2. vscode 插件配置
 #### 安装 clangd 插件
-&emsp;&emsp;打开 vscode 插件市场，键入 clangd 安装即可。
+打开 vscode 插件市场，键入 clangd 安装即可。
 
 #### 禁用默认的 C++ 插件（避免冲突）
-&emsp;&emsp;vscode 默认安装的 C++ 插件（ms-vscode.cpptools）会与 clangd 插件冲突，建议禁用该插件。可以在插件视图中找到该插件，点击禁用即可。
+vscode 默认安装的 C++ 插件（ms-vscode.cpptools）会与 clangd 插件冲突，建议禁用该插件。可以在插件视图中找到该插件，点击禁用即可。
 
 ### 3. vscode 配置
-&emsp;&emsp;需要修改 setting.json（全局或工作区），指定 clangd 行为。核心配置如下：
+需要修改 setting.json（全局或工作区），指定 clangd 行为。核心配置如下：
 ```json
 {
     // ... 原有配置项
@@ -105,15 +105,15 @@ clangd --version
 ```
 
 ### 4. 生成编译数据库
-&emsp;&emsp;clangd 依赖**编译数据库**（Compilation Database）来理解项目的编译选项和结构。通常，编译数据库以 **compile_commands.json** 文件的形式存在，其本质是项目编译信息的结构化记录，告诉 clangd 如何解析项目中的每一个源文件。
+clangd 依赖**编译数据库**（Compilation Database）来理解项目的编译选项和结构。通常，编译数据库以 **compile_commands.json** 文件的形式存在，其本质是项目编译信息的结构化记录，告诉 clangd 如何解析项目中的每一个源文件。
 
-&emsp;&emsp;compile_commands.json 是一个 JSON 数组，每个元素对应一个源文件的编译信息，核心字段包括：
+compile_commands.json 是一个 JSON 数组，每个元素对应一个源文件的编译信息，核心字段包括：
 
 - **directory**：编译该文件时的工作目录（绝对路径）；
 - **command**：编译该文件的完整命令（包含所有的编译选项）；
 - **file**：源文件的路径（绝对路径或相对于 directory 的相对路径）。
 
-&emsp;&emsp;例如：
+例如：
 
 ```json "directory" "command" "file"
 [
@@ -146,13 +146,13 @@ clangd --version
 ```
 
 :::tip
-其中，"directory" 字段记录的"编译该文件时的工作目录"，指的是编译器在编译这个源文件时所处目录的绝对路径，而"command" 字段中的编译选项，如 -I../include 等，都是相对于此"基准目录"进行解析的。:
+其中，“directory” 字段记录的“编译该文件时的工作目录”，指的是编译器在编译这个源文件时所处目录的绝对路径，而“command” 字段中的编译选项，如 -I../include 等，都是相对于此“基准目录”进行解析的。:
 :::
 
 #### 自动搜索逻辑
-&emsp;&emsp;当没有配置 --compile-commands-dir 参数，或者其值指定目录下不存在 compile_commands.json 文件时，clangd 都会执行一种自动搜索逻辑的策略寻找该 json 文件，具体为：
+当没有配置 --compile-commands-dir 参数，或者其值指定目录下不存在 compile_commands.json 文件时，clangd 都会执行一种自动搜索逻辑的策略寻找该 json 文件，具体为：
 
-1. **以"当前打开的文件"为起点**
+1. **以“当前打开的文件”为起点**
    clangd 的搜索会从**用户正在编辑的文件所在目录**开始。例如，假设你正在编辑 /home/user/my_project/src/main.cpp 文件，clangd 会从 /home/user/my_project/src 目录开始搜索 compile_commands.json 文件。
 2. **逐级向上搜索父目录**
    如果在当前目录没有找到目标 compile_commands.json 文件，clangd 会继续向上搜索其父目录，直到找到该文件，或到达文件系统的根目录为止。例如，继续上诉例子，clangd 会依次检查以下目录：
@@ -161,8 +161,8 @@ clangd --version
    - /home/user/
    - /home/
    - /
-3. **优先识别"项目根目录"**
-   为了避免无意义的全局搜索，或误将其他项目的 compile_commands.json 文件纳入考虑，clangd 会优先识别一些典型的"项目根目录"标志，如 .git、.hg、.svn 等版本控制目录。如果在搜索过程中遇到这些标志目录或文件，clangd 会将其所在目录视为项目根目录，并优先在该目录下寻找 compile_commands.json 文件。
+3. **优先识别“项目根目录”**
+   为了避免无意义的全局搜索，或误将其他项目的 compile_commands.json 文件纳入考虑，clangd 会优先识别一些典型的“项目根目录”标志，如 .git、.hg、.svn 等版本控制目录。如果在搜索过程中遇到这些标志目录或文件，clangd 会将其所在目录视为项目根目录，并优先在该目录下寻找 compile_commands.json 文件。
 4. **检查常见构建项目**
    在项目根目录下，clangd 会额外检查一些约定俗成的构建目录，如 build、build-dir、out、cmake-build-debug 等，这些目录通常时构建系统生成编译产物的地方，可能会包含 compile_commands.json 文件。
 5. **停止条件**
@@ -172,7 +172,7 @@ clangd --version
 
 
 
-&emsp;&emsp;生成 compile_commands.json 的方式有多种，最常见的是通过 CMake 构建系统进行生成。
+生成 compile_commands.json 的方式有多种，最常见的是通过 CMake 构建系统进行生成。
 
 #### 使用 CMake 生成（适用于 CMake 项目）
 ```bash "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
@@ -183,12 +183,12 @@ cd your_project\
 mkdir build && cd build
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .. # 关键参数，导出编译命令
 ```
-&emsp;&emsp;生成后，build/compile_commands.json 文件会被 clangd 自动识别（对应配置中的 --compile-commands-dir）。
+生成后，build/compile_commands.json 文件会被 clangd 自动识别（对应配置中的 --compile-commands-dir）。
 
 #### 使用 Bear 生成（适用非 CMake 项目，如 Make）
-&emsp;&emsp;简单说，bear 是一个"编译命令捕获工具"，它并不依赖特定的构建系统，而是通过监控整个构建过程，提取每一源文件的实际编译命令，从而生成最终的 compile_commands.json 文件，专门为**非CMake 构建系统**（如 Make等）生成编译数据库的工具。
+简单说，bear 是一个“编译命令捕获工具”，它并不依赖特定的构建系统，而是通过监控整个构建过程，提取每一源文件的实际编译命令，从而生成最终的 compile_commands.json 文件，专门为**非CMake 构建系统**（如 Make等）生成编译数据库的工具。
 
-> &emsp;&emsp;bear 捕获编译命令不意味着会改变或干预项目构建过程，只是作为一个监控者，记录下编译器调用的相关信息，并将其整理为 compile_commands.json 文件，所以编译命令还是会实际执行的。
+> bear 捕获编译命令不意味着会改变或干预项目构建过程，只是作为一个监控者，记录下编译器调用的相关信息，并将其整理为 compile_commands.json 文件，所以编译命令还是会实际执行的。
 
 ```bash
 # 安装 bear
@@ -199,12 +199,12 @@ bear make
 ```
 
 #### 手动创建（适用于简单项目）
-&emsp;&emsp;前面我们介绍了 compile_commands.json 的数据格式，对于一些简单的项目，也可以手动创建该文件，这里不再赘述。
+前面我们介绍了 compile_commands.json 的数据格式，对于一些简单的项目，也可以手动创建该文件，这里不再赘述。
 
 ### 5. 推荐使用项目级配置 .clangd
-&emsp;&emsp;前面介绍了如何在 vscode 的 setting.json 中配置 clangd，而 .clangd 文件作为 clangd 的原生配置文件，支持更多的高级配置选项，推荐在项目根目录下创建 .clangd 文件进行项目级配置。并且 **clangd 会优先读取 .clangd 文件中的配置**，覆盖 vscode setting.json 中的同名配置项。
+前面介绍了如何在 vscode 的 setting.json 中配置 clangd，而 .clangd 文件作为 clangd 的原生配置文件，支持更多的高级配置选项，推荐在项目根目录下创建 .clangd 文件进行项目级配置。并且 **clangd 会优先读取 .clangd 文件中的配置**，覆盖 vscode setting.json 中的同名配置项。
 
-&emsp;&emsp;.clangd 使用 YAML 格式，以下是一个示例配置：
+.clangd 使用 YAML 格式，以下是一个示例配置：
 ```yaml
 # .clangd 配置文件（YAML 格式，注意缩进）
 
@@ -292,4 +292,4 @@ Features:
 ```
 
 ## 总结
-&emsp;&emsp;通过上述步骤，你应该能够在 vscode 中成功配置并使用 clangd，提升 C/C++ 的开发体验。告别 c_cpp_properties.json，拥抱 compile_commands.json 吧，祝你编码愉快！
+通过上述步骤，你应该能够在 vscode 中成功配置并使用 clangd，提升 C/C++ 的开发体验。告别 c_cpp_properties.json，拥抱 compile_commands.json 吧，祝你编码愉快！

@@ -3,6 +3,7 @@ import expressiveCode from "astro-expressive-code";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import sitemap from "@astrojs/sitemap";
+import { unified } from "@astrojs/markdown-remark";
 import { defineConfig } from "astro/config";
 import rehypeKatex from "rehype-katex";
 import remarkDirective from "remark-directive";
@@ -18,8 +19,12 @@ import { remarkWikilink } from "./src/plugins/remark-wikilink";
 export default defineConfig({
   site: siteConfig.url,
   markdown: {
-    remarkPlugins: [remarkWikilink, remarkMath, remarkDirective, remarkAdmonition, remarkFootnotes],
-    rehypePlugins: [rehypeKatex, rehypeImageCaption],
+    // Astro 7 defaults to the Sätteri processor; passing plugins requires the
+    // `unified` remark/rehype processor from @astrojs/markdown-remark.
+    processor: unified({
+      remarkPlugins: [remarkWikilink, remarkMath, remarkDirective, remarkAdmonition, remarkFootnotes],
+      rehypePlugins: [rehypeKatex, rehypeImageCaption],
+    }),
   },
   // Allow Giscus iframe (giscus.app) to fetch custom theme CSS from dev server.
   // Astro's sec-fetch middleware blocks cross-site subresource requests by default.
