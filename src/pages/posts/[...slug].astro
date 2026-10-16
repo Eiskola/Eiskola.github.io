@@ -145,8 +145,11 @@ const relatedPosts = allPosts
   .post-sidebar {
     position: fixed;
     top: 9rem;
+    bottom: 2rem;
     left: calc(50% + 400px + 2rem);
-    width: 200px;
+    /* Shrink into the gutter on narrower viewports so the outline is never
+       clipped by the right edge, instead of hiding it earlier. */
+    width: clamp(150px, calc(50% - 440px), 200px);
   }
 
   .post-header {
@@ -283,7 +286,7 @@ const relatedPosts = allPosts
     }
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1180px) {
     .post-sidebar {
       display: none;
     }

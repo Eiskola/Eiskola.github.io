@@ -28,7 +28,7 @@ const items = headings
 {items.length > 0 && (
   <nav class="toc" id="toc">
     <span class="toc-title">Outline</span>
-    <ul>
+    <ul class="toc-list">
       {items.map((h) => (
         <li class={`toc-depth-${h.depth}`}>
           <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
@@ -40,13 +40,15 @@ const items = headings
 
 <style>
   .toc {
-    position: sticky;
-    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     font-size: 0.82rem;
     line-height: 1.6;
   }
 
   .toc-title {
+    flex: none;
     display: block;
     font-family: var(--font-heading);
     font-size: 0.75rem;
@@ -57,10 +59,38 @@ const items = headings
     margin-bottom: 0.75rem;
   }
 
-  .toc ul {
+  /* The list is its own scrollport, so a long outline scrolls under a pinned
+     title instead of running off the bottom of the viewport. The negative
+     margin + matching padding keep the active bar (which lives in `a`'s
+     negative margin) inside the visible padding box. */
+  .toc-list {
+    flex: 1 1 auto;
+    min-height: 0;
     list-style: none;
-    padding: 0;
-    margin: 0;
+    margin: 0 0 0 -0.75rem;
+    padding: 0.1rem 0.35rem 0.25rem 0.75rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .toc-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .toc-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-list::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+  }
+
+  .toc-list:hover::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
   }
 
   .toc li {
@@ -99,47 +129,143 @@ const items = headings
   }
 
   function initToc() {
-    const links = document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
-    if (links.length === 0) return;
+    const nav = document.getElementById("toc");
+    if (!nav || nav.dataset.tocReady === "true") return;
 
-    const headingIds = Array.from(links).map((a) => a.dataset.tocLink!);
-    const headingEls = headingIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
+    const list = nav.querySelector<HTMLElement>(".toc-list");
+    const links = nav.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
+    if (!list || links.length === 0) return;
+    nav.dataset.tocReady = "true";
+
+    const linkById = new Map<string, HTMLAnchorElement>();
+    const headingEls: HTMLElement[] = [];
+    links.forEach((a) => {
+      const id = a.dataset.tocLink!;
+      linkById.set(id, a);
+      const el = document.getElementById(id);
+      if (el) headingEls.push(el);
+    });
 
     if (headingEls.length === 0) return;
 
-    // Click: immediately highlight, observer will confirm/correct on scroll end
-    links.forEach((a) => {
-      a.addEventListener("click", () => {
-        setActive(links, a.dataset.tocLink!);
-      });
-    });
+    // ── Track the current section ────────────────────────────────────────
+    // Derived from scroll position rather than an IntersectionObserver: a jump
+    // (anchor click, PageDown, restored scroll position) never moves a heading
+    // *through* the observer band, so its ratio stays 0 and nothing is
+    // reported — the highlight would silently go stale.
+    const READING_LINE = 80; // px below the viewport top
+    let activeId = "";
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let activeId: string | null = null;
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            activeId = entry.target.id;
-            break;
-          }
+    function currentHeadingId(): string {
+      let id = headingEls[0].id;
+      for (const el of headingEls) {
+        if (el.getBoundingClientRect().top > READING_LINE) break;
+        id = el.id;
+      }
+      // At the very bottom, the last section is being read even though its
+      // heading may never reach the reading line.
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) {
+        id = headingEls[headingEls.length - 1].id;
+      }
+      return id;
+    }
+
+    // ── Keep the active entry visible ────────────────────────────────────
+    // While the reader scrolls the article, the outline follows along so the
+    // current section stays in view. Driving the outline itself holds that
+    // off; the moment the reader scrolls the article again, the hold is
+    // released and the outline snaps back to the current section.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let manualHold = false;
+    let selfScrollTimer = 0;
+
+    function markSelfScroll() {
+      clearTimeout(selfScrollTimer);
+      selfScrollTimer = window.setTimeout(() => {
+        selfScrollTimer = 0;
+      }, 400);
+    }
+
+    function reveal(link: HTMLElement) {
+      if (manualHold) return;
+      if (list.scrollHeight <= list.clientHeight + 1) return;
+
+      const listRect = list.getBoundingClientRect();
+      const itemRect = link.getBoundingClientRect();
+      // Already fully visible: leave the outline where it is.
+      if (itemRect.top >= listRect.top && itemRect.bottom <= listRect.bottom) return;
+
+      // Park the entry about a third from the top so neighbours stay in view.
+      const target =
+        list.scrollTop + (itemRect.top - listRect.top) - Math.max(24, list.clientHeight * 0.33);
+      const max = list.scrollHeight - list.clientHeight;
+
+      markSelfScroll();
+      list.scrollTo({
+        top: Math.min(Math.max(target, 0), max),
+        behavior: reduceMotion.matches ? "auto" : "smooth",
+      });
+    }
+
+    function setCurrent(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+      setActive(links, id);
+      const link = linkById.get(id);
+      if (link) reveal(link);
+    }
+
+    function suspend() {
+      manualHold = true;
+    }
+
+    // Scrolling the outline itself is a deliberate act: leave it where it is.
+    // `overscroll-behavior: contain` keeps these gestures from also scrolling
+    // the article, so the two signals never get confused.
+    list.addEventListener("wheel", suspend, { passive: true });
+    list.addEventListener("touchstart", suspend, { passive: true });
+    list.addEventListener("pointerdown", suspend, { passive: true });
+    list.addEventListener(
+      "scroll",
+      () => {
+        if (selfScrollTimer) {
+          // Our own smooth scroll is still emitting events.
+          markSelfScroll();
+          return;
         }
-        if (!activeId) {
-          for (let i = headingEls.length - 1; i >= 0; i--) {
-            const rect = headingEls[i].getBoundingClientRect();
-            if (rect.top < window.innerHeight / 2) {
-              activeId = headingEls[i].id;
-              break;
-            }
-          }
-        }
-        if (activeId) setActive(links, activeId);
+        suspend();
       },
-      { rootMargin: "-80px 0px -60% 0px" }
+      { passive: true }
     );
 
-    headingEls.forEach((el) => observer.observe(el));
+    // Click: highlight immediately, the scroll handler confirms afterwards
+    links.forEach((a) => {
+      a.addEventListener("click", () => setCurrent(a.dataset.tocLink!));
+    });
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const id = currentHeadingId();
+        const wasHeld = manualHold;
+        // The reader is scrolling the article again: following resumes, and the
+        // outline catches up with the section being read right away.
+        if (wasHeld) manualHold = false;
+        setCurrent(id);
+        if (wasHeld) {
+          const link = linkById.get(activeId);
+          if (link) reveal(link);
+        }
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+
+    setCurrent(currentHeadingId());
   }
 
   initToc();

@@ -31,13 +31,19 @@ const categories = [...catMap.entries()].sort((a, b) => a[0].localeCompare(b[0])
   .cat-sidebar {
     position: fixed;
     top: 9rem;
-    left: calc(50% - 400px - 2rem - 160px);
-    width: 160px;
+    bottom: 2rem;
+    /* Anchor the right edge to the article column and let the bar shrink into
+       the left gutter, instead of being clipped once the viewport narrows. */
+    right: calc(50% + 400px + 2rem);
+    width: clamp(120px, calc(50% - 440px), 160px);
+    display: flex;
+    flex-direction: column;
     font-size: 0.82rem;
     line-height: 1.6;
   }
 
   .cat-title {
+    flex: none;
     display: block;
     font-family: var(--font-heading);
     font-size: 0.75rem;
@@ -48,10 +54,36 @@ const categories = [...catMap.entries()].sort((a, b) => a[0].localeCompare(b[0])
     margin-bottom: 0.75rem;
   }
 
+  /* Its own scrollport, so a long category list scrolls under the pinned title
+     rather than running off the bottom of the viewport. */
   .cat-sidebar ul {
+    flex: 1 1 auto;
+    min-height: 0;
     list-style: none;
-    padding: 0;
+    padding: 0.1rem 0.35rem 0.25rem 0;
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .cat-sidebar ul::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .cat-sidebar ul::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .cat-sidebar ul::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+  }
+
+  .cat-sidebar ul:hover::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
   }
 
   .cat-sidebar li {
