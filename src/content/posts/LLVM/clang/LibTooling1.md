@@ -72,7 +72,7 @@ ClangTool(const CompilationDatabase &Compilations,
 
 作为 LibTooling 的核心调度器，ClangTool 构造函数接受多个参数，最重要的两个参数即：Compilations 和 SourcePaths。
 
-Compilations 是一个 CompilationDatabase 对象的引用，CompilationDatabase 是 Clang 编译数据库的抽象表示，封装了编译命令、编译选项和编译环境等信息。对于**编译数据库**我想你并不陌生，在 [clangd 介绍](https://eiskola.github.io/posts/llvm/tools/vscodeclangd/) 中我们已经了解过了。而对于 SourcePaths，顾名思义，其中包含了需要处理的源文件路径列表。ClangTool 会根据 SourcePaths 中的每个源文件，在 Compilations 中查找对应的编译命令和选项，然后驱动 Clang 前端来处理。
+Compilations 是一个 CompilationDatabase 对象的引用，CompilationDatabase 是 Clang 编译数据库的抽象表示，封装了编译命令、编译选项和编译环境等信息。对于**编译数据库**我想你并不陌生，在 [[LLVM/Tools/vscode+clangd|clangd 介绍]] 中我们已经了解过了。而对于 SourcePaths，顾名思义，其中包含了需要处理的源文件路径列表。ClangTool 会根据 SourcePaths 中的每个源文件，在 Compilations 中查找对应的编译命令和选项，然后驱动 Clang 前端来处理。
 
 ### ClangTool::run() 方法
 ClangTool 的核心逻辑由方法 run() 实现：

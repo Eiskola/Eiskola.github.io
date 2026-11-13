@@ -12,7 +12,7 @@ draft: true
 :::
 
 # 前言
-在上一篇博客[LibTooling架构解析（一）](https://eiskola.site/posts/llvm/clang/libtooling1/) 中我们对 LibTooling 的整体架构进行了概览，并讨论了其核心组件和实现机制。在本篇博客中，我们将继续分析 LibTooling 的核心架构，将重点放在余下的对 FrontendAction 的讨论上，并深入探讨从 FrontendAction 到业务逻辑实现的机制。
+在上一篇博客[[LLVM/clang/LibTooling1|LibTooling架构解析（一）]] 中我们对 LibTooling 的整体架构进行了概览，并讨论了其核心组件和实现机制。在本篇博客中，我们将继续分析 LibTooling 的核心架构，将重点放在余下的对 FrontendAction 的讨论上，并深入探讨从 FrontendAction 到业务逻辑实现的机制。
 
 # FrontendAction：定制前端行为的接口
 FrontendAction 是 LibTooling 中承载前端行为定制的核心接口。它定义了编译器在处理源代码时的行为，包括如何解析、分析和生成代码。FrontendAction 的设计使得开发者可以通过继承和重写其方法来实现自定义的前端行为，从而实现特定的业务逻辑。

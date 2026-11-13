@@ -91,7 +91,7 @@ $$
 y'_1=y_1+x_1=2y_2+2x_2=2y'_2.
 $$
 
-![图 1　doubleSquare 的循环对齐：先推进 v1，再同时推进两份副本。根据 PdscSynth 第 3.5 节重绘。](images/hyperproperty-refinement/alignment.svg "图 1　根据 PdscSynth 第 3.5 节重绘。箭头以一轮循环体为单位；循环退出后的处理单独列出。")
+![图 1　doubleSquare 的循环对齐：A 只推进 v1 到达 B，再让两份副本各走一轮回到 A′；z₂=0 时退出循环。根据 PdscSynth 第 3.5 节重绘。](images/hyperproperty-refinement/alignment.svg "图 1　根据 PdscSynth 第 3.5 节重绘。箭头以一轮循环体为单位；A、B、A′ 都只含线性关系，循环退出后的处理单独列出。")
 
 在 $A$ 且 $z_2>0$ 时，$z_1=2z_2\geq 2$，上面的两步循环都可以执行。到达 $A$ 且 $z_2=0$ 时，$z_1$ 也为零，两边退出循环。此时只需执行 v2 的最后一次翻倍，原来的 $y_1=2y_2$ 就变成输出相等。
 
@@ -257,7 +257,7 @@ CHC 的线性与否按子句体中的未知关系谓词应用个数区分。$P(X
 
 普通路径反例只展示“一路怎么走到坏状态”。这里要证明无论选择哪一种合法调度都不能避开失败，推导中就要同时保留不同调度对应的证明义务。多个推导又可能复用同一结论，因此求解器给出的不可满足性证明是 DAG。
 
-![图 2　路径与 DAG 反驳的概念示意。右侧箭头表示证明依赖，各调度的失败结论需要共同成立。](images/hyperproperty-refinement/counterexample-dag.svg "图 2　概念示意，并非论文某个具体反例。右侧箭头沿证明依赖方向汇合；多个前提必须共同成立，不能任取一条分支。")
+![图 2　路径与 DAG 反驳的概念示意。左侧固定调度只给出一条路径；右侧各调度的失败结论共同合取为 D*，再推出 D_M。](images/hyperproperty-refinement/counterexample-dag.svg "图 2　概念示意，并非论文某个具体反例。右侧箭头沿证明依赖方向汇合；多个前提必须共同成立，不能任取一条分支。")
 
 把这个 DAG 任意截成一条路径，会丢掉“所有调度都失败”的信息。将共享子图复制成树虽然可以保留依赖，但最坏情况下会带来指数膨胀。这正是第二篇精化算法要处理的对象。
 
@@ -274,7 +274,7 @@ AbsHyHorn 的外层过程从空谓词集开始：$\mathcal P=\varnothing$。设�
 
 原始 $\Pi$ 包含循环带来的递归；$G$ 是一个有限无环图，因此按它建立的 $\Pi_R$ **没有递归，但仍可能是非线性的**。这样既保留了反例中的多前提关系，也把一次精化限制在有限证明结构内。
 
-![图 3　AbsHyHorn 的精化循环，依据 Procedure 1 绘制；省略 unknown 等未决情况。](images/hyperproperty-refinement/refinement-loop.svg "图 3　AbsHyHorn Procedure 1 的主要分支。图中省略求解器 unknown 等未决情况；只有明确求解结果才能进入相应分支。")
+![图 3　AbsHyHorn 的精化循环：抽象 CHC 的 SAT 证明性质，UNSAT 产生反驳 DAG；精化 CHC 的 UNSAT 反驳性质，SAT 提供新谓词。依据 Procedure 1 绘制。](images/hyperproperty-refinement/refinement-loop.svg "图 3　AbsHyHorn Procedure 1 的主要分支。图中省略求解器 unknown 等未决情况；Π_P 与 Π_R 的 SAT/UNSAT 读法相反。")
 
 $\Pi_R$ 的结果要这样读：
 

@@ -29,10 +29,17 @@ function buildPostMap(): Map<string, PostEntry> {
         if (!data.title) return;
 
         const rel = path.relative(POSTS_DIR, full).replace(/\.mdx?$/, "");
-        // Mimic Astro glob loader slug: lowercase + strip dots and special chars
+        // Mimic Astro's glob loader slug (github-slugger per path segment):
+        // lowercase, whitespace to hyphens, preserve letters/numbers/_/-.
         const slugged = rel
           .split("/")
-          .map((seg) => seg.toLowerCase().replace(/[^a-z0-9一-鿿-]/g, ""))
+          .map((seg) =>
+            seg
+              .toLowerCase()
+              .trim()
+              .replace(/\s+/g, "-")
+              .replace(/[^\p{L}\p{N}_-]/gu, ""),
+          )
           .join("/");
         const url = `/posts/${slugged}`;
         // Index by both raw ID and slugged ID

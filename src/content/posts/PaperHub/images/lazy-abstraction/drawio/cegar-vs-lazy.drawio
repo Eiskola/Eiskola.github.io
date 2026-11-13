@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram id="cegar-vs-lazy" name="cegar-vs-lazy">
+    <mxGraphModel dx="828" dy="520" grid="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="828" pageHeight="520" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bg" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=15;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="828" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="title-left" value="全局 CEGAR" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=20;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;fontStyle=1;fontColor=#2F5D8A;" vertex="1" parent="1">
+          <mxGeometry x="24" y="18" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sub-left" value="抽象 → 检查 → 精化，循环重建" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="24" y="50" width="360" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="a-p" value="谓词集合 P" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="32" y="92" width="150" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-build" value="构造全局抽象模型" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="32" y="160" width="150" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-check" value="模型检查" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="32" y="228" width="150" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-diamond" value="反例可具体化？" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A4A4A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=15;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;shape=rhombus;perimeter=rhombusPerimeter;" vertex="1" parent="1">
+          <mxGeometry x="208" y="224" width="156" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a-add" value="加入新谓词" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F5E7DB;strokeColor=#A85D3A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="208" y="154" width="156" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-error" value="报告真实错误" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F3E1E1;strokeColor=#9B4A4A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="208" y="312" width="156" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-cost" value="&lt;b&gt;代价&lt;/b&gt;&lt;br&gt;每轮重建整个抽象模型&lt;br&gt;全程序共用一组谓词&lt;br&gt;精化后从头搜索" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="32" y="388" width="348" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p-build" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="a-p" target="a-build">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-build-check" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="a-build" target="a-check">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-check-diamond" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="a-check" target="a-diamond">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-diamond-add" value="否" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="a-diamond" target="a-add">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-add-build" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a-add" target="a-build">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-diamond-error" value="是" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a-diamond" target="a-error">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="divider-top" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=15;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="414" y="18" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="divider-bottom" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=15;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="414" y="492" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="divider" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#B8B8B8;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;dashed=1;dashPattern=4 3;endArrow=none;" edge="1" parent="1" source="divider-top" target="divider-bottom">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="title-right" value="Lazy Abstraction" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=20;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;fontStyle=1;fontColor=#2F5D8A;" vertex="1" parent="1">
+          <mxGeometry x="442" y="18" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="sub-right" value="只维护一棵按需展开的可达树" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="442" y="50" width="360" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="r-root" value="入口" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="570" y="92" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="r-left" value="位置 2" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="492" y="162" width="120" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r-right" value="子树 A" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="678" y="162" width="110" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r-pivot" value="pivot" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F5E7DB;strokeColor=#A85D3A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="492" y="238" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="r-covered" value="已覆盖" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F4F4F4;strokeColor=#7A7A7A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;dashed=1;dashPattern=4 3;" vertex="1" parent="1">
+          <mxGeometry x="678" y="238" width="110" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r-error" value="ERROR" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F3E1E1;strokeColor=#9B4A4A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="492" y="318" width="120" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="r-note" value="&lt;b&gt;做法&lt;/b&gt;&lt;br&gt;只在反例经过的节点提高精度&lt;br&gt;R_n ⊆ U 时停止展开&lt;br&gt;旧子树保留并复用" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=left;verticalAlign=middle;spacing=4;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="442" y="388" width="348" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="e-root-left" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="r-root" target="r-left">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-root-right" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="r-root" target="r-right">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-left-pivot" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="r-left" target="r-pivot">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pivot-error" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="r-pivot" target="r-error">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-right-covered" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="r-right" target="r-covered">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-covered-left" value="覆盖" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#A85D3A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;dashed=1;dashPattern=4 3;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="r-covered" target="r-left">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-safe" value="程序安全" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="32" y="312" width="150" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="e-check-safe" value="无错误" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=6;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#555555;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="a-check" target="a-safe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

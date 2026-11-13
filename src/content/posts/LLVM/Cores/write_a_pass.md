@@ -34,7 +34,7 @@ Pass 在 LLVM 中扮演的角色不仅是“实现优化”，更是整个中端
 ## Pass 分类与类设计
 前面提到，Pass 分为**分析类**（Analysis Pass）和**转换类**（Transformation Pass）两类。实际上，按粒度不同，Pass 还可以进一步划分为**模块级**（ModulePass）、**函数级**（FunctionPass）、**循环级**（LoopPass）等不同层级的 Pass。
 
-LLVM 15.0.7 基于 **NPM**（New Pass Manager）的全新 Pass 框架，一个核心的修改是通过 [CRTP](https://eiskola.site/posts/pl/c_cpp/templates/crtp/) **静态多态**替换了旧版 Pass Manager 中基于虚函数的动态多态设计。不妨来看一下 NPM 中的 Pass 类设计：
+LLVM 15.0.7 基于 **NPM**（New Pass Manager）的全新 Pass 框架，一个核心的修改是通过 [[PL/C_Cpp/Templates/CRTP|CRTP]] **静态多态**替换了旧版 Pass Manager 中基于虚函数的动态多态设计。不妨来看一下 NPM 中的 Pass 类设计：
 
 ```cpp {4, 12-13}
 // $LLVM_HOME/include/llvm/IR/PassManager.h
@@ -56,10 +56,10 @@ template <typename DerivedT> struct PassInfoMixin {
   }
 };
 ```
-PassInfoMixin 显然是一个**模板混入类**，通过 [CRTP](https://eiskola.site/posts/pl/c_cpp/templates/crtp/) 方式为派生类**提供了两个通用的方法**（基于 “反射” 实现）：**name()** 用于获取 Pass 的名称，**printPipeline()** 用于打印 Pass 管道信息。PassInfoMixin 是最顶层的 Pass 模板基类，所有具体的 Pass 都会直接或间接地继承自它。
+PassInfoMixin 显然是一个**模板混入类**，通过 [[PL/C_Cpp/Templates/CRTP|CRTP]] 方式为派生类**提供了两个通用的方法**（基于 “反射” 实现）：**name()** 用于获取 Pass 的名称，**printPipeline()** 用于打印 Pass 管道信息。PassInfoMixin 是最顶层的 Pass 模板基类，所有具体的 Pass 都会直接或间接地继承自它。
 
 :::tip
-可能你会疑惑，作为 CRTP 模板基类的 PassInfoMixin 并没有直接调用派生类 DerivedT 的任何方法，和 [CRTP](https://eiskola.site/posts/pl/c_cpp/templates/crtp/) 中用法有所差异。实际上，CRTP 的核心思想是通过模板参数将派生类类型传递给基类，让基类知道派生类的类型信息，从而实现静态多态，这里实际上也是如此。
+可能你会疑惑，作为 CRTP 模板基类的 PassInfoMixin 并没有直接调用派生类 DerivedT 的任何方法，和 [[PL/C_Cpp/Templates/CRTP|CRTP]] 中用法有所差异。实际上，CRTP 的核心思想是通过模板参数将派生类类型传递给基类，让基类知道派生类的类型信息，从而实现静态多态，这里实际上也是如此。
 :::
 
 分析类 Pass 和转换类 Pass 的区别体现在它们各自的模板基类上，分析类 Pass 继承自 AnalysisInfoMixin，而转换类 Pass 则继承自 PassInfoMixin，而 AnalysisInfoMixin 则是继承自 PassInfoMixin：

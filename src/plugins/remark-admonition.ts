@@ -26,26 +26,25 @@ export function remarkAdmonition() {
       if (!TYPES.includes(type as any)) return;
 
       const data = node.data || (node.data = {});
-      const attributes = (node.attributes || {}) as Record<string, string>;
-      const label = attributes["has-directive-label"];
+      const first = node.children[0];
 
-      let titleText = type.toUpperCase();
-
-      // Extract label text from first child if present
-      if (label && node.children.length > 0) {
-        const first = node.children[0];
-        if (
-          first.type === "paragraph" &&
-          first.children.length > 0 &&
-          first.children[0].type === "text"
-        ) {
-          titleText = first.children[0].value;
-          node.children = node.children.slice(1);
-        }
+      // remark-directive turns a container label like `:::note[标题]` into a
+      // paragraph with `data.directiveLabel = true`. Reuse it as the title so
+      // that inline formatting inside the label is preserved.
+      if (
+        first?.type === "paragraph" &&
+        (first.data as { directiveLabel?: boolean } | undefined)?.directiveLabel
+      ) {
+        first.data = {
+          ...first.data,
+          hName: "span",
+          hProperties: { class: "adm-title" },
+        };
+        node.children = [first, ...node.children.slice(1)];
+      } else {
+        // Prepend the default title paragraph to children
+        node.children = [makeTitleParagraph(type.toUpperCase()), ...node.children];
       }
-
-      // Prepend title paragraph to children
-      node.children = [makeTitleParagraph(titleText), ...node.children];
 
       // Set hast rendering info
       data.hName = "blockquote";

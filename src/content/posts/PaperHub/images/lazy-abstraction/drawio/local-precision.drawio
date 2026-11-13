@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram id="local-precision" name="local-precision">
+    <mxGraphModel dx="828" dy="472" grid="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="828" pageHeight="472" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cell-paper" value="" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=18;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;rounded=0;pointerEvents=0;locked=1;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="0" y="0" width="828" height="472" />
+        </mxCell>
+        <mxCell id="cell-entry-node" value="&lt;b&gt;位置 1&lt;/b&gt;　LOCK = 0" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#F2F6F8;strokeColor=#9AAAB5;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=18;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="296" y="24" width="236" height="53" />
+        </mxCell>
+        <mxCell id="cell-left" value="&lt;b&gt;位置 2 · 已展开&lt;/b&gt;&lt;br&gt;LOCK = 0" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="132" y="124" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-right" value="&lt;b&gt;位置 7 · 可选分支&lt;/b&gt;&lt;br&gt;LOCK = 0" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=16;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="457" y="124" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-fork-left" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#68808F;endArrow=block;endFill=1;endSize=6;exitX=0.28;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-entry-node" target="cell-left">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="362" y="96" />
+              <mxPoint x="258" y="96" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cell-fork-right" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#68808F;endArrow=block;endFill=1;endSize=6;exitX=0.72;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-entry-node" target="cell-right">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="466" y="96" />
+              <mxPoint x="583" y="96" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cell-body-left" value="&lt;b&gt;锁循环&lt;/b&gt;&lt;br&gt;新增谓词　new = old" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=18;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="132" y="227" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-body-right" value="&lt;b&gt;记录本轮是否获取锁&lt;/b&gt;&lt;br&gt;新增谓词　got_lock = 0" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=18;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="457" y="227" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-loop-body" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#2F5D8A;endArrow=block;endFill=1;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-left" target="cell-body-left">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="cell-optional-body" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#4F7658;endArrow=block;endFill=1;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-right" target="cell-body-right">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="cell-leaf-left" value="&lt;b&gt;位置 2 · 循环回边&lt;/b&gt;&lt;br&gt;LOCK = 0 ∧ new ≠ old" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="132" y="331" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-leaf-right" value="&lt;b&gt;位置 2 · 分支结束&lt;/b&gt;&lt;br&gt;数据区域蕴含 LOCK = 0" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="457" y="331" width="253" height="65" />
+        </mxCell>
+        <mxCell id="cell-loop-back" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#2F5D8A;endArrow=block;endFill=1;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-body-left" target="cell-leaf-left">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="cell-join" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#4F7658;endArrow=block;endFill=1;endSize=6;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cell-body-right" target="cell-leaf-right">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="cell-covered-left" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#A85D3A;endArrow=block;endFill=1;endSize=6;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" source="cell-leaf-left" target="cell-left">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="78" y="363" />
+              <mxPoint x="78" y="156" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cell-covered-right" value="" style="html=1;edgeStyle=segmentEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#A85D3A;endArrow=block;endFill=1;endSize=6;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" source="cell-leaf-right" target="cell-left">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="420" y="363" />
+              <mxPoint x="420" y="156" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cell-legend" value="&lt;b&gt;虚线&lt;/b&gt;　R_n ⊆ U，叶子已被位置 2 覆盖" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#222222;align=center;verticalAlign=middle;spacingLeft=8;spacingRight=8;rounded=0;fontColor=#A85D3A;spacing=0;spacingLeft=0;spacingRight=0;" vertex="1" parent="1">
+          <mxGeometry as="geometry" x="99" y="419" width="630" height="31" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
