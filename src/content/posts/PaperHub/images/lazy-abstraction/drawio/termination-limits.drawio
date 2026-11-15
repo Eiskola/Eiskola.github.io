@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram id="termination-limits" name="termination-limits">
+    <mxGraphModel dx="828" dy="520" grid="0" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="828" pageHeight="520" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="828" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="title" value="终止性的边界" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=20;fontColor=#2F5D8A;fontStyle=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="24" y="18" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="充分条件、精化循环与不可判定的问题" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#555555;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="24" y="50" width="700" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="panel-a" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.2;dashed=1;dashPattern=4 4;" vertex="1" parent="1">
+          <mxGeometry x="24" y="90" width="250" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="a-title" value="① 什么时候保证终止" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#2F5D8A;fontStyle=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="218" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="a-cond1" value="&lt;b&gt;有限迹等价&lt;/b&gt;&lt;br&gt;迹等价类只有有限多个&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;状态集合仍然可以无限&lt;/font&gt;" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="40" y="136" width="218" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="a-and" value="∧" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=15;fontColor=#506472;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="196" width="218" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="a-cond2" value="&lt;b&gt;升链条件 ACC&lt;/b&gt;&lt;br&gt;没有无限严格上升链&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;⟦r₀⟧ ⊂ ⟦r₁⟧ ⊂ …&lt;/font&gt;" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="218" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="a-result" value="&lt;b&gt;LazyAbstraction 终止&lt;/b&gt;" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.3;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="218" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a-arrow" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#4F7658;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1" source="a-cond2" target="a-result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-note" value="还需：错误状态无出边；精化时删除 pivot 子树；focus 保证重新计算后继能排除原反例。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#506472;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="354" width="218" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="panel-b" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.2;dashed=1;dashPattern=4 4;" vertex="1" parent="1">
+          <mxGeometry x="289" y="90" width="250" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="b-title" value="② 保留子树的精化循环" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#2F5D8A;fontStyle=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="305" y="100" width="218" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="b-subtitle" value="keep_subtree = true 时" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#9B4A4A;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="315" y="122" width="198" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" value="2 被父节点覆盖" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="315" y="146" width="198" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="另一分支发现反例&lt;br&gt;精化 x = 0" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#F5E7DB;strokeColor=#A85D3A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="315" y="200" width="198" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="2 不再 covered&lt;br&gt;重新展开" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="315" y="258" width="198" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" value="又得到同一棵树" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#F3E1E1;strokeColor=#9B4A4A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="315" y="316" width="198" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="b-e1" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1" source="b1" target="b2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-e2" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1" source="b2" target="b3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-e3" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1" source="b3" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-loop" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.3;strokeColor=#9B4A4A;endArrow=block;endFill=1;endSize=5;dashed=1;dashPattern=4 4;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#9B4A4A;labelBackgroundColor=#FBFBFB;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4" target="b1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="305" y="335" />
+              <mxPoint x="305" y="165" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b-note-red" value="保留过粗的旧子树，可能无限精化" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#9B4A4A;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="315" y="366" width="198" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="b-note-green" value="删除 pivot 后代（false）可打断循环" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#4F7658;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="315" y="390" width="198" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="b-note" value="这是复用计算与保证终止之间的取舍。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#506472;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="315" y="416" width="198" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="panel-c" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.2;dashed=1;dashPattern=4 4;" vertex="1" parent="1">
+          <mxGeometry x="554" y="90" width="250" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="c-title" value="③ 为什么只能是半算法" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=14;fontColor=#2F5D8A;fontStyle=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="570" y="100" width="218" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="c-finabs" value="&lt;b&gt;L-FINABS&lt;/b&gt;" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E8EEF5;strokeColor=#2F5D8A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=13;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="570" y="136" width="218" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="c-desc" value="给定 M, m₀, m_f：是否存在有限谓词集 F，使 [m_f] 在商系统 M/≈_F 中不可达？" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#506472;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="570" y="176" width="218" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="c-reduce" value="从二计数器机的停机问题归约" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9AAAB5;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="570" y="238" width="218" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="c-complete" value="&lt;b&gt;Presburger-FINABS&lt;/b&gt;&lt;br&gt;是 Σ₁⁰-完全的" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#F5E7DB;strokeColor=#A85D3A;strokeWidth=1.2;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="570" y="286" width="218" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="c-e1" value="" style="html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;strokeWidth=1.2;strokeColor=#4A4A4A;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1" source="c-reduce" target="c-complete">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-undec" value="所以有限谓词抽象问题不可判定" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=11;fontColor=#9B4A4A;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="570" y="336" width="218" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="c-o1" value="真实错误" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#F3E1E1;strokeColor=#9B4A4A;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="570" y="368" width="70" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="c-o2" value="证明安全" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#E5EFE7;strokeColor=#4F7658;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="644" y="368" width="70" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="c-o3" value="不终止" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FBFBFB;strokeColor=#D0D0D0;strokeWidth=1.1;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="718" y="368" width="70" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="c-note" value="创新在组织方式与效率，不在可判定性。" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Noto Serif CJK SC;fontSize=10;fontColor=#506472;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="570" y="416" width="218" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
