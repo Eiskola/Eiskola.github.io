@@ -1,0 +1,221 @@
+<!-- Hover preview for footnote references -->
+<div
+  class="footnote-tooltip"
+  id="footnote-tooltip"
+  role="tooltip"
+  aria-hidden="true"
+>
+  <div class="footnote-tooltip-label" id="footnote-tooltip-label"></div>
+  <div class="footnote-tooltip-body" id="footnote-tooltip-body"></div>
+</div>
+
+<script>
+  type TooltipPlacement = "top" | "bottom";
+
+  function initFootnoteTooltip() {
+    if (document.documentElement.dataset.footnoteTooltipReady === "1") return;
+    document.documentElement.dataset.footnoteTooltipReady = "1";
+
+    const REF_SELECTOR = "a[data-footnote-ref], .footnote-ref a[href^='#']";
+    const UI_SELECTOR = `#footnote-tooltip, ${REF_SELECTOR}`;
+
+    let hideTimer: number | undefined;
+    let activeRef: HTMLAnchorElement | null = null;
+    const originalDescribedBy = new WeakMap<HTMLAnchorElement, string | null>();
+
+    const getTooltip = () => document.getElementById("footnote-tooltip");
+    const getLabel = () => document.getElementById("footnote-tooltip-label");
+    const getBody = () => document.getElementById("footnote-tooltip-body");
+
+    function cancelHide() {
+      if (hideTimer !== undefined) {
+        window.clearTimeout(hideTimer);
+        hideTimer = undefined;
+      }
+    }
+
+    function refFromTarget(target: EventTarget | null): HTMLAnchorElement | null {
+      if (!(target instanceof Element)) return null;
+      const ref = target.closest(REF_SELECTOR);
+      return ref instanceof HTMLAnchorElement ? ref : null;
+    }
+
+    function isInsideUi(target: EventTarget | null): boolean {
+      return target instanceof Element && target.closest(UI_SELECTOR) !== null;
+    }
+
+    function restoreDescribedBy(ref: HTMLAnchorElement) {
+      const original = originalDescribedBy.get(ref);
+      if (original === undefined) return;
+      if (original) {
+        ref.setAttribute("aria-describedby", original);
+      } else {
+        ref.removeAttribute("aria-describedby");
+      }
+      originalDescribedBy.delete(ref);
+    }
+
+    function hide() {
+      cancelHide();
+      if (activeRef) {
+        restoreDescribedBy(activeRef);
+        activeRef = null;
+      }
+      const tooltip = getTooltip();
+      if (!tooltip) return;
+      tooltip.classList.remove("is-visible");
+      tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function scheduleHide(delay = 160) {
+      cancelHide();
+      hideTimer = window.setTimeout(() => {
+        hideTimer = undefined;
+        hide();
+      }, delay);
+    }
+
+    function positionTooltip(tooltip: HTMLElement, ref: HTMLAnchorElement) {
+      const margin = 12;
+      const gap = 10;
+      const refRect = ref.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+
+      const spaceAbove = refRect.top;
+      const spaceBelow = window.innerHeight - refRect.bottom;
+      const canFitAbove = spaceAbove >= tooltipRect.height + gap + margin;
+      const canFitBelow = spaceBelow >= tooltipRect.height + gap + margin;
+
+      let placement: TooltipPlacement;
+      if (canFitAbove) {
+        placement = "top";
+      } else if (canFitBelow) {
+        placement = "bottom";
+      } else {
+        placement = spaceAbove >= spaceBelow ? "top" : "bottom";
+      }
+
+      const desiredTop =
+        placement === "top"
+          ? refRect.top - tooltipRect.height - gap
+          : refRect.bottom + gap;
+      const maxLeft = Math.max(margin, window.innerWidth - tooltipRect.width - margin);
+      const desiredLeft = refRect.left + refRect.width / 2 - tooltipRect.width / 2;
+      const left = Math.min(Math.max(desiredLeft, margin), maxLeft);
+      const top = Math.max(
+        margin,
+        Math.min(desiredTop, window.innerHeight - tooltipRect.height - margin),
+      );
+
+      tooltip.style.left = `${Math.round(left)}px`;
+      tooltip.style.top = `${Math.round(top)}px`;
+      tooltip.dataset.placement = placement;
+
+      const arrowLeft = Math.min(
+        Math.max(refRect.left + refRect.width / 2 - left, 14),
+        tooltipRect.width - 14,
+      );
+      tooltip.style.setProperty("--footnote-arrow-left", `${Math.round(arrowLeft)}px`);
+    }
+
+    function show(ref: HTMLAnchorElement) {
+      const href = ref.getAttribute("href");
+      if (!href || !href.startsWith("#")) return;
+
+      const target = document.getElementById(decodeURIComponent(href.slice(1)));
+      const tooltip = getTooltip();
+      const label = getLabel();
+      const body = getBody();
+      if (!target || !tooltip || !label || !body) return;
+
+      cancelHide();
+
+      if (activeRef && activeRef !== ref) {
+        restoreDescribedBy(activeRef);
+      }
+
+      const clone = target.cloneNode(true) as HTMLElement;
+      clone.removeAttribute("id");
+      clone.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+      clone
+        .querySelectorAll(
+          "a[data-footnote-backref], a[aria-label^='Back to reference'], .footnote-backref",
+        )
+        .forEach((node) => node.remove());
+
+      body.replaceChildren(...Array.from(clone.childNodes));
+
+      const refLabel = ref.textContent?.trim() ?? "";
+      label.textContent = refLabel ? `脚注 ${refLabel}` : "脚注";
+
+      if (!originalDescribedBy.has(ref)) {
+        originalDescribedBy.set(ref, ref.getAttribute("aria-describedby"));
+      }
+      const describedBy = ref.getAttribute("aria-describedby") ?? "";
+      if (!describedBy.split(/\s+/).includes("footnote-tooltip")) {
+        ref.setAttribute(
+          "aria-describedby",
+          `${describedBy} footnote-tooltip`.trim(),
+        );
+      }
+
+      activeRef = ref;
+      tooltip.classList.add("is-visible");
+      tooltip.setAttribute("aria-hidden", "false");
+      positionTooltip(tooltip, ref);
+    }
+
+    document.addEventListener("mouseover", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("#footnote-tooltip")) {
+        cancelHide();
+        return;
+      }
+      const ref = refFromTarget(target);
+      if (ref) show(ref);
+    });
+
+    document.addEventListener("mouseout", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (!target.closest(UI_SELECTOR)) return;
+      if (isInsideUi(event.relatedTarget)) return;
+      scheduleHide();
+    });
+
+    document.addEventListener("focusin", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("#footnote-tooltip")) {
+        cancelHide();
+        return;
+      }
+      const ref = refFromTarget(target);
+      if (ref) show(ref);
+    });
+
+    document.addEventListener("focusout", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (!target.closest(UI_SELECTOR)) return;
+      if (isInsideUi((event as FocusEvent).relatedTarget)) return;
+      scheduleHide();
+    });
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#footnote-tooltip")) return;
+      if (target.closest(REF_SELECTOR)) hide();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hide();
+    });
+
+    window.addEventListener("scroll", hide, { passive: true });
+    window.addEventListener("resize", hide);
+  }
+
+  initFootnoteTooltip();
+  document.addEventListener("astro:page-load", initFootnoteTooltip);
+</script>

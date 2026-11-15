@@ -1,6 +1,7 @@
 ---
 import { SITE } from "../consts";
 import CategoryBar from "../components/CategoryBar.astro";
+import FootnoteTooltip from "../components/FootnoteTooltip.astro";
 import Header from "../components/Header.astro";
 import ImageLightbox from "../components/ImageLightbox.astro";
 import ScrollProgress from "../components/ScrollProgress.astro";
@@ -60,5 +61,6 @@ const url = new URL(Astro.url.pathname, SITE.url).href;
       <slot />
     </main>
     <ImageLightbox />
+    <FootnoteTooltip />
   </body>
 </html>

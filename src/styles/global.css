@@ -332,6 +332,119 @@ hr.footnotes-sep {
   color: var(--color-accent);
 }
 
+/* ── Footnote hover preview ─────────────────── */
+.footnote-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9500;
+  max-width: min(24rem, calc(100vw - 1.5rem));
+  padding: 0.65rem 0.8rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  line-height: 1.65;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(3px);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    visibility 0s linear 120ms;
+}
+
+.footnote-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    visibility 0s;
+}
+
+.footnote-tooltip::after {
+  content: "";
+  position: absolute;
+  left: var(--footnote-arrow-left, 50%);
+  width: 9px;
+  height: 9px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transform: translateX(-50%) rotate(45deg);
+  pointer-events: none;
+}
+
+.footnote-tooltip[data-placement="top"]::after {
+  bottom: -5.5px;
+  border-top: 0;
+  border-left: 0;
+}
+
+.footnote-tooltip[data-placement="bottom"]::after {
+  top: -5.5px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.footnote-tooltip-label {
+  margin-bottom: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-accent);
+}
+
+.footnote-tooltip-body {
+  max-height: min(50vh, 22rem);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.footnote-tooltip-body p {
+  margin: 0.3rem 0;
+}
+
+.footnote-tooltip-body p:first-child {
+  margin-top: 0;
+}
+
+.footnote-tooltip-body p:last-child {
+  margin-bottom: 0;
+}
+
+.footnote-tooltip-body ul,
+.footnote-tooltip-body ol {
+  margin: 0.3rem 0;
+  padding-left: 1.2rem;
+}
+
+.footnote-tooltip-body a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.footnote-tooltip-body .katex-display {
+  margin: 0.35rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+@media (max-width: 640px) {
+  .footnote-tooltip {
+    max-width: calc(100vw - 1rem);
+    font-size: 0.82rem;
+  }
+}
+
 /* ── Lists ─────────────────────────────────── */
 ul, ol {
   padding-left: 1.5rem;
