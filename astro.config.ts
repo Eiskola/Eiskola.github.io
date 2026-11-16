@@ -9,11 +9,13 @@ import rehypeKatex from "rehype-katex";
 import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import { siteConfig, codeBlock } from "./src/config";
+import { pluginBlockAnchors } from "./src/plugins/expressive-code/block-anchors";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge";
 import { pluginMathText } from "./src/plugins/expressive-code/math-text";
 import { rehypeImageCaption } from "./src/plugins/rehype-image-caption";
 import { remarkAdmonition } from "./src/plugins/remark-admonition";
 import { remarkFootnotes } from "./src/plugins/remark-footnotes";
+import { remarkPageAnchors } from "./src/plugins/remark-page-anchors";
 import { remarkWikilink } from "./src/plugins/remark-wikilink";
 
 // https://astro.build/config
@@ -23,7 +25,14 @@ export default defineConfig({
     // Astro 7 defaults to the Sätteri processor; passing plugins requires the
     // `unified` remark/rehype processor from @astrojs/markdown-remark.
     processor: unified({
-      remarkPlugins: [remarkWikilink, remarkMath, remarkDirective, remarkAdmonition, remarkFootnotes],
+      remarkPlugins: [
+        remarkWikilink,
+        remarkMath,
+        remarkDirective,
+        remarkPageAnchors,
+        remarkAdmonition,
+        remarkFootnotes,
+      ],
       rehypePlugins: [rehypeKatex, rehypeImageCaption],
     }),
   },
@@ -46,6 +55,7 @@ export default defineConfig({
         pluginLineNumbers(),
         pluginLanguageBadge(),
         pluginMathText(),
+        pluginBlockAnchors(),
       ],
       defaultProps: {
         wrap: codeBlock.wrap,

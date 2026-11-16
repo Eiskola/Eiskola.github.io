@@ -256,7 +256,7 @@ $$
 
 ### 3.2 pivot 是第一个空交集
 
-Algorithm 2 找到一条抽象反例后，不会立刻报告错误。它沿这条反例的路径往根走，逐个检查祖先的前向区域和坏区域是否相交。交集第一次变空的地方，就是反例开始不可行的位置。下面提到的行号对应 §5.4 列出的完整伪代码。
+[[#algo-2]] 找到一条抽象反例后，不会立刻报告错误。它沿这条反例的路径往根走，逐个检查祖先的前向区域和坏区域是否相交。交集第一次变空的地方，就是反例开始不可行的位置。下面提到的行号对应 [[#sec-5-4|§5.4]] 列出的完整伪代码。
 
 把根到当前节点 $n$ 的路径看成一条抽象反例（abstract counterexample）：它的终点 $n$ 满足
 
@@ -283,7 +283,7 @@ B(n_r)=\operatorname{pre}(B(n),\sigma_r)
 =\operatorname{pre}(\varepsilon,\sigma_r).
 $$
 
-Algorithm 2 第 4 行在端点检查 $R(n)\cap\varepsilon$。端点处 $B(n)=\varepsilon$，所以这就是 $R(n)\cap B(n)$。第 5 行把同样的检查推广到祖先：
+[[#algo-2|Algorithm 2]] 第 4 行在端点检查 $R(n)\cap\varepsilon$。端点处 $B(n)=\varepsilon$，所以这就是 $R(n)\cap B(n)$。第 5 行把同样的检查推广到祖先：
 
 $$
 R(n_r)\cap\operatorname{pre}(\varepsilon,\sigma_r)\neq\bot,
@@ -345,7 +345,7 @@ $$
 
 注意这里 $W$ 仍然是 `LOCK = 0`，变的是 $F$。位置 2 还没有执行 `old = new`，所以当前状态集合不需要改变；但新的支撑谓词让从位置 2 计算后继时能够保留 `new` 与 `old` 的关系。这正是“局部精化”能成立的关键。
 
-:::important[focus 增加的是 F，不是给 W 再加一个合取项]
+:::important[focus 增加的是 F，不是给 W 再加一个合取项（见[[#para-4.1-AreaDefination]]）]
 位置 2 的区域仍然是 `LOCK = 0`。`new = old` 不是对当前位置的断言，而是允许后续抽象转移观察这个谓词。把这一点和“加一个条件让区域变小”区分开，后面的精度序和覆盖判断才不会混。
 :::
 
@@ -408,6 +408,8 @@ $$
 $$
 
 其中 $r\preceq r'$ 表示 $\llbracket r\rrbracket\subseteq\llbracket r'\rrbracket$。此外还要求这些操作对精度序单调：更精确的输入不会产生更粗的输出。
+
+::anchor[区域定义]{id="para-4.1-AreaDefination"}
 
 在谓词抽象里，区域具体写成
 
@@ -491,7 +493,7 @@ $$
 \llbracket R_n\rrbracket\subseteq\llbracket U\rrbracket,
 $$
 
-就可以把节点 $n$ 标记为 **covered**。单个祖先包含新叶子是最常见的情况，Algorithm 2 也允许用多个区域的并，甚至用另一棵子树提供覆盖。检查比较的是具体状态集合，两个节点的支撑谓词集合可以不同；这一点是局部精度能成立的关键。
+就可以把节点 $n$ 标记为 **covered**。单个祖先包含新叶子是最常见的情况，[[#algo-2|Algorithm 2]] 也允许用多个区域的并，甚至用另一棵子树提供覆盖。检查比较的是具体状态集合，两个节点的支撑谓词集合可以不同；这一点是局部精度能成立的关键。
 
 覆盖关系可以理解为一种“已经处理过”的证书：如果 $R_n$ 被 $U$ 包含，那么从 $n$ 出发的任何具体执行，都已经在 $U$ 对应的那些节点上被展开过。因为 $U$ 里的每个节点都计算过对具体后继的上近似，所以不需要再为 $n$ 重复计算。循环就是通过这个机制自动停下来的。
 
@@ -505,7 +507,7 @@ $$
 
 覆盖关系用**标记时间戳**维护。每个已标记节点带一个时间戳，记录它最近一次被标记的时间。精化 pivot 时，把在 pivot 的时间戳之后才被标记为已覆盖的叶子撤销标记，让这些叶子回到待处理状态。为什么只需要撤销这些？因为覆盖关系只会因为“覆盖者被精化”而失效；在 pivot 之前建立的覆盖关系不受这次精化影响。深度优先展开时，受影响的检查还可以限制在 pivot 的子树内。
 
-Algorithm 2 还留了一个 `keep_subtree` 选择。精化时既可以保留 pivot 的子树，重算从 pivot 到当前节点的反例路径；也可以删除 pivot 的后代，从 pivot 重新展开。保留子树能复用更多计算，但论文 §4.2 的例子说明，保留过粗的旧节点有时会让同一轮精化和搜索不断重演。终止性定理要求 `keep_subtree` 总是返回 false，也就是精化时删除后代。
+[[#algo-2|Algorithm 2]] 还留了一个 `keep_subtree` 选择。精化时既可以保留 pivot 的子树，重算从 pivot 到当前节点的反例路径；也可以删除 pivot 的后代，从 pivot 重新展开。保留子树能复用更多计算，但论文 §4.2 的例子说明，保留过粗的旧节点有时会让同一轮精化和搜索不断重演。终止性定理要求 `keep_subtree` 总是返回 false，也就是精化时删除后代。
 
 这里体现了一个很实际的取舍：**覆盖和子树复用让算法更快，但也让“已经处理过”的证书依赖于当前的抽象精度**。一旦精度改变，旧证书可能失效，必须重新验证。Lazy Abstraction 的工程实现很大程度上就是在管理这些失效和重算。
 
@@ -515,7 +517,7 @@ Algorithm 2 还留了一个 `keep_subtree` 选择。精化时既可以保留 piv
 
 ### 5.1 两个算法：通用搜索与反例驱动
 
-论文先给出 `SymbReachRefine`（Algorithm 1），再给出 `LazyAbstraction`（Algorithm 2）。前者是一个通用的符号可达性算法，允许在搜索过程中做三种非确定性选择：
+论文先给出 `SymbReachRefine`（[[#algo-1|Algorithm 1]]），再给出 `LazyAbstraction`（[[#algo-2|Algorithm 2]]）。前者是一个通用的符号可达性算法，允许在搜索过程中做三种非确定性选择：
 
 | 操作 | `SymbReachRefine` | `LazyAbstraction` 的触发条件 |
 | :--- | :--- | :--- |
@@ -537,7 +539,7 @@ Algorithm 2 还留了一个 `keep_subtree` 选择。精化时既可以保留 piv
 
 主循环可以写成下面的形式：
 
-```pcode title="LazyAbstraction：主循环" frame="code" mark={4,8}
+```pcode title="LazyAbstraction：主循环" frame="code" mark={4,8} id="algo-main"
 while 仍有未处理节点:
     取出一个未处理节点 $n$
     if $R_n$ 与错误区域 $E$ 相交:
@@ -554,9 +556,9 @@ while 仍有未处理节点:
 返回所有已标记、未被覆盖的节点区域之并 $U$
 ```
 
-这段伪代码对应论文 Algorithm 2 的 1–27 行：第 4 行是抽象反例的终点，第 5 行找最老的、与坏区域相交的祖先，第 9 行取它的父节点作为 pivot，第 11 行调用 `focus`，第 12–18 行处理子树和 covered 标记，第 19–26 行是普通前向搜索。论文允许不同的搜索顺序，深度优先和广度优先都不影响正确性，但会影响性能。
+这段伪代码对应论文 [[#algo-2|Algorithm 2]] 的 1–27 行：第 4 行是抽象反例的终点，第 5 行找最老的、与坏区域相交的祖先，第 9 行取它的父节点作为 pivot，第 11 行调用 `focus`，第 12–18 行处理子树和 covered 标记，第 19–26 行是普通前向搜索。论文允许不同的搜索顺序，深度优先和广度优先都不影响正确性，但会影响性能。
 
-完整的两份算法伪代码放在 §5.4，行号与论文一致；这里保留压缩版，是为了先看清控制流。
+完整的两份算法伪代码放在 [[#sec-5-4]]，行号与论文一致；这里保留压缩版，是为了先看清控制流。
 
 算法返回安全区域的依据是：令 $U$ 为它返回的区域并集。每个展开过的节点都计算过对具体后继的过近似；被覆盖的后继已经包含在 $U$ 中；覆盖失效时，相关叶子会重新参与搜索。这样，搜索结束时 $U$ 包含初态、对具体转移闭合，并与错误区域不相交。论文 Theorem 2 给出了两种终止结果的正确性：返回的错误路径在具体模型中可行，或者返回一个避开错误区域的可达状态过近似。
 
@@ -579,13 +581,15 @@ $$
 
 ![图 8　LazyAbstraction 的主循环。错误分支先用精确回推判断反例是否可行；虚假反例从 pivot 局部精化并撤销过期的覆盖标记；其余节点要么被覆盖，要么展开抽象后继。](images/lazy-abstraction/search-refine.png)
 
+::anchor[§5.4]{#sec-5-4}
+
 ### 5.4 论文算法原文
 
-前面的主循环为了叙事做了压缩。真正引用 Algorithm 1、Algorithm 2 的行号时，还是需要看到完整伪代码。下面按论文的行号列出两份算法；输入里的区域结构、抽象结构和 `focus` 算子沿用前面的定义。
+前面的主循环为了叙事做了压缩。真正引用 [[#algo-1|Algorithm 1]]、[[#algo-2|Algorithm 2]] 的行号时，还是需要看到完整伪代码。下面按论文的行号列出两份算法；输入里的区域结构、抽象结构和 `focus` 算子沿用前面的定义。
 
 **Algorithm 1：`SymbReachRefine(A, r0)`**
 
-```pcode title="Algorithm 1　SymbReachRefine" frame="code"
+```pcode title="Algorithm 1　SymbReachRefine" frame="code" id="algo-1" label="Algorithm 1"
 create root $r$ labeled with $r_0$
 while there are unmarked nodes do
     if choose() then
@@ -621,7 +625,7 @@ return the region $\bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$
 
 **Algorithm 2：`LazyAbstraction(A, Φ, r0, ε)`**
 
-```pcode title="Algorithm 2　LazyAbstraction" frame="code"
+```pcode title="Algorithm 2　LazyAbstraction" frame="code" id="algo-2" label="Algorithm 2"
 create root $r$ labeled with $r_0$
 while there are unmarked nodes do
     pick an unmarked node $n{:}r$

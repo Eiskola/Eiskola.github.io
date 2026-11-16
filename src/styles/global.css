@@ -264,6 +264,30 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Cross-reference links resolve to a local page anchor; no preview UI. */
+.xref {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.15em;
+}
+
+.xref:hover {
+  text-decoration-style: solid;
+}
+
+/* Keep jump targets clear of the viewport edge. */
+.page-anchor,
+.expressive-code .frame[id],
+.expressive-code[id],
+h1[id],
+h2[id],
+h3[id],
+h4[id],
+h5[id],
+h6[id] {
+  scroll-margin-top: 1.5rem;
+}
+
 blockquote {
   border-left: 3px solid var(--color-accent);
   padding-left: 1rem;
