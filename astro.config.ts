@@ -71,6 +71,7 @@ export default defineConfig({
         borderColor: "var(--color-border)",
         codeLineHeight: "1.5rem",
         codeFontFamily: "var(--font-mono)",
+        codeFontWeight: "700",
         codeFontSize: "0.82rem",
         codeBackground: "var(--color-code-bg)",
         uiFontFamily: "var(--font-heading)",

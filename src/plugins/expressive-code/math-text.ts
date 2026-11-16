@@ -126,6 +126,8 @@ export function pluginMathText() {
       /* pcode prose uses a paper-like serif; KaTeX keeps its own math font. */
       pre[data-language="pcode"] > code {
         font-family: "Times New Roman", Times, "Noto Serif CJK SC", serif;
+        /* Keep pcode at Medium even though regular code blocks are bolder. */
+        font-weight: 500;
       }
 
       /* Slightly larger than regular code blocks for long-form pseudocode. */
