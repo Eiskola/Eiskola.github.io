@@ -1,9 +1,14 @@
 ---
-title: 'Lazy Abstraction：从全局 CEGAR 到按需精化'
+title: Lazy Abstraction：从全局 CEGAR 到按需精化
 published: 2026-11-13
-updated: 2026-11-15
+updated: 2026-11-16
 description: 从全局 CEGAR 的重建代价出发，理解 Lazy Abstraction 如何在一棵可达树中局部精化、用覆盖复用旧结果，并补上区域结构、focus 契约与终止性边界。
-tags: [论文阅读, 形式化验证, 模型检测, 谓词抽象, 抽象精化]
+tags:
+  - 论文阅读
+  - 形式化验证
+  - 模型检测
+  - 谓词抽象
+  - 抽象精化
 category: Paper
 draft: false
 ---
@@ -36,6 +41,8 @@ $$
 \subseteq
 \llbracket\widehat{\operatorname{post}}_a(\varphi,\Gamma)\rrbracket.
 $$
+
+这里下标 $a$ 表示抽象模型；$\operatorname{post}_a$ 是抽象模型里的后继，$\widehat{\operatorname{post}}_a$ 是它的上近似。
 
 如果抽象可达区域与 $E$ 不相交，原程序就是安全的；如果抽象搜索到达 $E$，只说明可能存在一条错误路径，还需要检查这条路径在具体程序中是否可行。[^predabs]
 
@@ -98,19 +105,126 @@ do {
 
 ## 3. 反例为什么是假的：坏区域与 pivot
 
-### 3.1 精确前驱
+### 3.1 坏区域：从 ERROR 往回推
 
-设 $R_i$ 是前向搜索在节点 $i$ 得到的抽象可达区域，$B_i$ 是从节点 $i$ 沿反例剩余边走到错误所需的坏区域。$B_i$ 用精确前驱逐边回推：
+前向搜索算的是 $R_i$：从入口走到节点 $i$，可能处于哪些状态。反例分析要算反方向：从节点 $i$ 出发，哪些状态能沿当前反例后缀走到 ERROR。这个集合记作 $B_i$，称为坏区域。
+
+为方便查阅，先把本节用到的符号列出来。
+
+| 符号 | 含义 |
+| :--- | :--- |
+| $s,s'$ | 具体数据状态；$s'$ 是执行一条边之后的状态 |
+| $E$ / $\varepsilon$ | 错误区域；在 ERROR 位置，数据部分没有额外约束，所以 $E=\top$ |
+| $R_i$ | 前向搜索在节点 $i$ 得到的可达区域，是具体可达状态的过近似 |
+| $B_i$ | 节点 $i$ 的坏区域：从 $i$ 沿当前反例后缀能到达 ERROR 的具体状态集合 |
+| $a_i$ | 从节点 $i$ 到 $i+1$ 的边标签，例如赋值、`assume` 或函数调用 |
+| $T_{a_i}(s,s')$ | 边 $a_i$ 的转移关系；为真表示状态 $s$ 执行 $a_i$ 可以到达 $s'$ |
+| $\operatorname{pre}_{a_i}(Q)$ | 区域 $Q$ 的精确前驱：$\{s\mid\exists s'.\,T_{a_i}(s,s')\land s'\in Q\}$ |
+| $\operatorname{pre}(\varepsilon,\sigma)$ | 沿标签序列 $\sigma$ 的精确前驱 |
+| $\top,\bot$ | 全集与空集；这里只讨论固定控制位置下的数据状态 |
+| $Q[e/x]$ | 把公式 $Q$ 中自由出现的 $x$ 全部换成表达式 $e$ |
+| $\operatorname{wp}(a,Q)$ | 最弱前置条件：执行 $a$ 之前至少要满足什么，才能保证执行后满足 $Q$ |
+| $R_i\land B_i$ | 两个区域的交集；SAT 表示存在具体状态同时属于两者，UNSAT 表示交集为空 |
+
+边 $a_i$ 可以看成状态之间的转移关系 $T_{a_i}(s,s')$。例如 `new++` 要求 $s'.\texttt{new}=s.\texttt{new}+1$，其他变量不变；`assume(new=old)` 要求 $s.\texttt{new}=s.\texttt{old}$，并且 $s'=s$。精确前驱就是把所有能通过这条边到达目标区域的状态收集起来。
+
+`pre` 和 `wp` 是同一件事的两种写法。`pre` 直接操作集合；`wp` 操作公式。对确定性的赋值和 `assume`，两者可以互相转换。$B_i$ 必须是精确的：它回答“哪些具体状态真的能走到错误”。如果这里也用抽象前驱，$B_i$ 会变成过近似，$R_i\land B_i$ 为空就不能说明具体反例不可行。$R_i$ 是过近似没有问题，因为最后只要精确的 $B_i$ 与它不相交，就足以排除反例。
+
+实际计算时，我们更多使用公式形式。三条基本规则是：
 
 $$
 \begin{aligned}
-B_{\mathrm{err}} &= E,\\
-B_i(s) &= \operatorname{pre}_{a_i}(B_{i+1})(s)\\
-&= \exists s'\,\bigl(T_{a_i}(s,s')\land B_{i+1}(s')\bigr).
+\operatorname{wp}(x=e,Q)&=Q[e/x],\\
+\operatorname{wp}(\operatorname{assume}(c),Q)&=c\land Q,\\
+\operatorname{wp}(s_1;s_2,Q)&=\operatorname{wp}(s_1,\operatorname{wp}(s_2,Q)).
 \end{aligned}
 $$
 
-错误位置本身没有额外的数据约束，所以 $B_{\mathrm{err}}=\top$（这里把控制位置单独记在表中）。对这个例子，回推结果如下：
+第一条是赋值替换。例如 $\operatorname{wp}(x=x+1,\ x=5)$ 是 $x+1=5$，也就是 $x=4$。第二条是条件过滤：如果 $c$ 不成立，这条路径根本不能执行。第三条是序列规则，最容易被写反：先处理后面执行的 $s_2$，再处理前面的 $s_1$。因为 WP 是从后往前推的，要在 `s1; s2` 之后满足 $Q$，先要保证 `s2` 之后满足 $Q$，再把这个条件往前推过 `s1`。
+
+于是坏区域可以写成
+
+$$
+B_{\mathrm{err}}=E,\qquad
+B_i=\operatorname{pre}_{a_i}(B_{i+1}).
+$$
+
+下面从 ERROR 开始，沿路径 $2\to3\to4\to5\to6\to\mathrm{ERROR}$ 走一遍。
+
+位置 6 到 ERROR 的边是 `unlock()`。`unlock()` 在 `LOCK=0` 时进入 ERROR，所以
+
+$$
+B_6=\operatorname{pre}_{\mathrm{unlock}}(E)=\texttt{LOCK}=0.
+$$
+
+这里 $B_{\mathrm{err}}$ 和 $B_6$ 不是同一个东西。$B_{\mathrm{err}}$ 是 ERROR 位置本身的坏区域，数据上是 $\top$；$B_6$ 是从位置 6 再执行一条 `unlock()` 边能进入 ERROR 的状态集合。两者相差一条边。
+
+位置 5 到 6 的边是 `assume(new=old)`。`assume(c)` 只过滤状态，不改变变量，所以
+
+$$
+\begin{aligned}
+B_5
+&=\operatorname{pre}_{\mathrm{assume}(\texttt{new}=\texttt{old})}(B_6)\\
+&=(\texttt{new}=\texttt{old})\land B_6\\
+&=\texttt{LOCK}=0\land\texttt{new}=\texttt{old}.
+\end{aligned}
+$$
+
+这一步把循环退出条件合进了坏区域：只有既未持锁、又满足 `new=old` 的状态，才能沿这条边继续走向 ERROR。
+
+位置 4 到 5 是 `unlock(); new++`，这是整条回推里最关键的一步。WP 从后往前算，所以先处理 `new++`，再处理 `unlock()`。
+
+先对 `new++` 做替换：
+
+$$
+\operatorname{wp}(B_5,\texttt{new++})
+=\texttt{LOCK}=0\land\texttt{new}+1=\texttt{old}.
+$$
+
+再对 `unlock()` 回推。它的后置条件是 `LOCK=0`，但成功执行的前置条件是 `LOCK=1`：
+
+$$
+\operatorname{wp}(\texttt{LOCK}=0\land\texttt{new}+1=\texttt{old},\texttt{unlock}())
+=\texttt{LOCK}=1\land\texttt{new}+1=\texttt{old}.
+$$
+
+因此
+
+$$
+B_4=\texttt{LOCK}=1\land\texttt{new}+1=\texttt{old}.
+$$
+
+这里最容易写错的是 `unlock()`：它的后置是 `LOCK=0`，前置却是 `LOCK=1`。在成功执行的分支上，把它看成 `assume(LOCK=1); LOCK=0`，就不会记反。`lock()` 同理，可以看成 `assume(LOCK=0); LOCK=1`。
+
+位置 3 到 4 的边是 `assume(true)`，非确定分支的两个方向都允许。`assume(true)` 不增加数据约束，所以
+
+$$
+B_3=\operatorname{pre}_{\mathrm{assume}(\mathrm{true})}(B_4)=B_4.
+$$
+
+位置 2 到 3 是 `lock(); old=new`。同样先处理 `old=new`，再处理 `lock()`。先做 `old=new` 的替换：
+
+$$
+\operatorname{wp}(B_3,\texttt{old=new})
+=\texttt{LOCK}=1\land\texttt{new}+1=\texttt{new}.
+$$
+
+再对 `lock()` 回推。成功加锁的后置是 `LOCK=1`，前置是 `LOCK=0`：
+
+$$
+\operatorname{wp}(\texttt{LOCK}=1\land\texttt{new}+1=\texttt{new},\texttt{lock}())
+=\texttt{LOCK}=0\land\texttt{new}+1=\texttt{new}.
+$$
+
+因此
+
+$$
+B_2=\texttt{LOCK}=0\land\texttt{new}+1=\texttt{new}.
+$$
+
+`new+1=new` 在整数理论中不可满足，所以 $B_2=\bot$。于是 $R_2\land B_2=\bot$，位置 2 第一次出现空交集。
+
+把每个节点的结果和正向区域放在一起：
 
 | 位置 | 前向区域 $R_i$ | 反向坏区域 $B_i$ | $R_i\land B_i$ |
 | :--- | :--- | :--- | :--- |
@@ -120,36 +234,73 @@ $$
 | 3，选择进入分支 | $\texttt{LOCK}=1$ | $\texttt{LOCK}=1\land\texttt{new}+1=\texttt{old}$ | 非空 |
 | 2，准备获取锁并保存计数值 | $\texttt{LOCK}=0$ | $\texttt{LOCK}=0\land\texttt{new}+1=\texttt{new}$ | 空 |
 
-位置 5 的坏区域已经合入了退出条件。回到位置 4，`new++` 把 `new = old` 变成 `new + 1 = old`，合法解锁又要求此时 `LOCK = 1`。位置 3 走的是非确定分支，数据条件保持不变。再回到位置 2，`old = new` 把等式右边的 `old` 换成 `new`，得到 `new + 1 = new`，矛盾。
+表中的“非空/空”就是 $R_i\land B_i$ 的 SAT/UNSAT：非空表示存在具体状态同时属于前向区域和坏区域，空表示两者不相交。
 
-这里有一个实现细节值得说明。论文并不是直接在语法上做 $Q[e/x]$ 的替换，而是为被赋值的变量引入一个新版本，例如用 `new'` 表示 `new++` 之后的值，并保留
+![图 3　坏区域的反向回推。从 ERROR 出发，沿反例路径逐条边计算精确前驱；箭头向下表示 WP 的计算方向与程序执行方向相反。位置 2 的 B₂ 含有 new+1=new，因此为空。](images/lazy-abstraction/bad-region-wp.png)
+
+上面的直接代入已经足够得到 $B_2$，但 `new` 在 `new++` 前后代表不同的值，公式里同名容易混。把位置 2 入口的 `new` 记为 $n_0$，把 `old=new` 之后的 `old` 记为 $o_1$，把 `new++` 之后的 `new` 记为 $n_1$：
 
 $$
-old' = new,\qquad new' = new+1,\qquad new' = old'
+o_1=n_0,\qquad n_1=n_0+1,\qquad n_1=o_1.
 $$
 
-这样的等式。这样，每条赋值关系都留在公式里，定理证明器才能追踪它到底用了哪条等式。最后把带撇号的版本去掉，`new = old` 就浮现为一条有用的支撑谓词。
+这里的 $n_0,n_1,o_1$ 不是程序里新增的变量，只是给同一个程序变量在不同程序点的值起的版本名。由后两式得到 $n_1=n_0+1$ 和 $n_1=o_1=n_0$，于是 $n_0+1=n_0$，矛盾。论文用带撇号的版本写这三条关系：
+
+$$
+old'=new,\qquad new'=new+1,\qquad new'=old'.
+$$
+
+其中 $old'$ 是执行 `old=new` 之后的 `old`，$new'$ 是执行 `new++` 之后的 `new`；它们不是新的程序变量。这正是 §3.3 中 `focus` 使用的带版本 WP：保留赋值关系，定理证明器才能追踪每条等式。
+
+这里要区分 $B_2$ 和 `new=old`。$B_2$ 是 `LOCK=0 ∧ new+1=new`，不是 `LOCK=0 ∧ new=old`。`new=old` 是后面 `focus` 从不可满足性证明中提取的支撑谓词；它描述的是位置 2 之后 `old=new` 建立的关系，不是位置 2 本身的坏区域。
 
 ### 3.2 pivot 是第一个空交集
 
-从错误节点往根回溯，位置 3 仍然与坏区域相交，位置 2 第一次出现空交集。论文称这个节点为 **pivot node**（枢轴节点）。换一种说法，Algorithm 2 先找到最老的、与坏区域相交的祖先 $n_0$，再取它的父节点作为 pivot；在这个例子里 $n_0$ 是位置 3，父节点位置 2 就是 pivot。两种说法等价，后者更贴近论文的伪代码。
+Algorithm 2 找到一条抽象反例后，不会立刻报告错误。它沿这条反例的路径往根走，逐个检查祖先的前向区域和坏区域是否相交。交集第一次变空的地方，就是反例开始不可行的位置。下面提到的行号对应 §5.4 列出的完整伪代码。
 
-把这句话写成公式会更清楚。设当前反例路径是 $\sigma$，当前节点是 $n$。对路径上的祖先 $n_r$，记 $\sigma_r$ 为从 $n_r$ 到 $n$ 的标签序列，于是它的坏区域是 $B(n_r)=\operatorname{pre}(\varepsilon,\sigma_r)$。算法沿着路径从 $n$ 向根回溯，找最老的祖先 $n_r$，使得
+把根到当前节点 $n$ 的路径看成一条抽象反例（abstract counterexample）：它的终点 $n$ 满足
 
 $$
-\operatorname{pre}(\varepsilon,\sigma_r)\cap R(n_r)\neq\bot .
+R(n)\cap\varepsilon\neq\bot.
 $$
 
-如果 $n_r$ 就是根，说明初始区域中存在一个具体状态能沿整条路径走到错误，反例是真实的。否则取 $n_r$ 的父节点 $n_{rr}$ 作为 pivot。此时有
+也就是说，$n$ 的抽象可达区域与错误区域相交。$n$ 只是抽象搜索树中的节点，不一定是真实的 ERROR 节点；事实上，$R(n)$ 依赖当前的谓词集合表达能力，所以这条抽象反例可能只是伪反例。后面扩展谓词集合时，它可能就不存在了。
+
+因为 $n$ 是这条抽象反例的终点，自然有
+$
+B(n)=\varepsilon.
+$
+这里的 $\varepsilon$ 不是“假设 $n$ 一定是真实错误”，而是后缀终点处的后置条件。坏区域从终点往根递归。对路径上的节点 $m$，设它的子节点是 $m'$，边标签是 $a$，则
+
+$$
+B(m)=\operatorname{pre}_{a}(B(m')).
+$$
+
+对祖先 $n_r$，设 $\sigma_r$ 是从 $n_r$ 到 $n$ 的标签序列，则
+
+$$
+B(n_r)=\operatorname{pre}(B(n),\sigma_r)
+=\operatorname{pre}(\varepsilon,\sigma_r).
+$$
+
+Algorithm 2 第 4 行在端点检查 $R(n)\cap\varepsilon$。端点处 $B(n)=\varepsilon$，所以这就是 $R(n)\cap B(n)$。第 5 行把同样的检查推广到祖先：
+
+$$
+R(n_r)\cap\operatorname{pre}(\varepsilon,\sigma_r)\neq\bot,
+$$
+
+也就是 $R(n_r)\cap B(n_r)\neq\bot$。
+
+从 $n$ 往根走，找最老的、满足上式的祖先 $n_r$。**如果它是根，说明初始区域中存在一个具体状态能沿整条路径走到错误，反例是真实的**。否则取它的父节点 $n_{rr}$ 作为 pivot。因为 $n_r$ 还相交，而 $n_{rr}$ 已经不相交：
 
 $$
 R(n_{rr})\cap B(n_{rr})=\bot,\qquad
-R(n_r)\cap B(n_r)\neq\bot .
+R(n_r)\cap B(n_r)\neq\bot.
 $$
 
-所以 pivot 正好是“坏区域与可达区域的交集从空变为非空”的边界。它之后的那段路径是最小不可行后缀；它之前的前缀仍然可能到达 pivot，因此只需要从 pivot 往后提高精度。这里容易搞反：pivot 不是当前节点，也不是反例里第一个看起来不可行的节点，而是最老相交祖先的父节点。
+在锁例子里，$n_r$ 是位置 3，pivot 是位置 2。$R_2\cap B_2=\bot$，所以从入口到达位置 2 的具体状态都不可能沿当前后缀走到 ERROR。反例是假的，问题出在位置 2 之后。
 
-pivot 的意义在于：所有沿原前缀到达位置 2 的具体状态都落在 $R_2$ 中，而 $R_2$ 与 $B_2$ 不相交，所以没有任何具体状态能沿这条后缀走到错误。反例是假的，但错在位置 2 之后的那段路径。精化应该从这里开始，而不是把整棵树重新展开。
+pivot 不是当前节点，也不是第一个不可行节点，而是最老相交祖先的父节点。它把路径分成两段：从根到 pivot 的前缀仍然可能到达 pivot，pivot 之后的后缀已经不可行。精化只需要从 pivot 往后做。
 
 ### 3.3 focus：从不可满足性证明中找谓词
 
@@ -159,7 +310,7 @@ $$
 \Phi:R\times\Sigma^{*}\times R\to R,
 $$
 
-输入当前区域 $r$、需要排除的反例后缀 $\sigma$ 和错误区域 $\varepsilon$，输出一个精化后的区域 $r'=\Phi(r,\sigma,\varepsilon)$。这个函数必须满足三条契约：
+输入当前区域 $r$、需要排除的反例后缀 $\sigma$ 和错误区域 $\varepsilon$，输出一个精化后的区域 $r'=\Phi(r,\sigma,\varepsilon)$。这里 $\Sigma^*$ 是有限标签序列的集合，$\equiv$ 表示两个区域对应同一个具体状态集合；$\sqsubseteq$ 是下一节要定义的精度预序，现在只需知道它表示“左侧的抽象精度不低于右侧”。这个函数必须满足三条契约：
 
 $$
 \Phi(r,\sigma,\varepsilon)\equiv r,
@@ -198,7 +349,7 @@ $$
 位置 2 的区域仍然是 `LOCK = 0`。`new = old` 不是对当前位置的断言，而是允许后续抽象转移观察这个谓词。把这一点和“加一个条件让区域变小”区分开，后面的精度序和覆盖判断才不会混。
 :::
 
-![图 3　focus 算子的精化契约。输入区域 r、反例后缀 σ 和错误区域 ε；用带版本的弱前置条件构造不可满足性证明，从证明中提取原子公式并去掉版本标记，得到新的支撑谓词。输出区域保持 W 不变、扩展 F。](images/lazy-abstraction/focus-contract.png)
+![图 4　focus 算子的精化契约。输入区域 r、反例后缀 σ 和错误区域 ε；用带版本的弱前置条件构造不可满足性证明，从证明中提取原子公式并去掉版本标记，得到新的支撑谓词。输出区域保持 W 不变、扩展 F。](images/lazy-abstraction/focus-contract.png)
 
 ```diff lang="text" title="位置 5：执行了解锁分支之后"
 - LOCK = 0
@@ -279,7 +430,7 @@ $$
 
 这两个序不能混。覆盖检查问的是“这个区域的状态集合是否已经被别处包含”，所以用 $\preceq$；精化问的是“这个区域是否还能观察更多谓词”，所以用 $\sqsubseteq$。在谓词抽象中，增加支撑谓词可以让 $F$ 变大、让 $r$ 在精度序下更靠前，但 $W$ 和 $\llbracket r\rrbracket$ 可以完全不变。
 
-![图 4　区域、精度与两个序。左侧是具体状态集合；中间把区域写成 (W, F)，W 描述当前状态，F 决定后续还能观察什么；右侧区分语义包含与精度序。精化可以只改 F 而不改 W。](images/lazy-abstraction/region-precision.png)
+![图 5　区域、精度与两个序。左侧是具体状态集合；中间把区域写成 (W, F)，W 描述当前状态，F 决定后续还能观察什么；右侧区分语义包含与精度序。精化可以只改 F 而不改 W。](images/lazy-abstraction/region-precision.png)
 
 现在来看抽象后继到底怎么算。固定当前支撑谓词集合 $F$，把 $W$ 写成规范化的析取范式。对每个析取项 $g$ 和每个支撑谓词 $p\in F$，分别检查
 
@@ -346,7 +497,7 @@ $$
 
 锁例子还有一条从位置 7 开始的可选分支。每轮先清零 `got_lock`，若获取了锁就递增它，随后只在 `got_lock` 非零时解锁。如果忘记这个变量，抽象搜索可能在跳过加锁后仍进入解锁分支。跟踪 $\texttt{got\_lock}=0$ 就能区分这两条路径。这棵子树也会流向位置 2，那些叶子满足 $\texttt{LOCK}=0$，可以由先前的位置 2 节点覆盖。
 
-![图 5　同一棵可达树中的两组局部谓词。循环回边产生的新叶子满足 LOCK = 0 ∧ new ≠ old，位置 7 分支流回的叶子只要求 LOCK = 0；两者都被先前的位置 2 覆盖。虚线表示覆盖关系。](images/lazy-abstraction/local-precision.png)
+![图 6　同一棵可达树中的两组局部谓词。循环回边产生的新叶子满足 LOCK = 0 ∧ new ≠ old，位置 7 分支流回的叶子只要求 LOCK = 0；两者都被先前的位置 2 覆盖。虚线表示覆盖关系。](images/lazy-abstraction/local-precision.png)
 
 ### 4.3 覆盖失效后要重新检查
 
@@ -372,7 +523,7 @@ Algorithm 2 还留了一个 `keep_subtree` 选择。精化时既可以保留 piv
 | 删除子树 | 选一个已标记节点，删除它的儿子，并撤销受影响的 covered 叶子 | `keep_subtree = false` 时由精化触发 |
 | 继续搜索 | 取未标记节点；被覆盖就标记 covered，否则展开抽象后继 | 当前节点与 $\varepsilon$ 不相交 |
 
-`SymbReachRefine` 的意义在于：它先把“精化会改变树结构”这件事的正确性证明清楚。具体地说，精化一条路径时，算法选一个与路径起点区域 $r$ 等价但更精确的 $w$，然后对路径上的每个节点 $m$ 用 $\widehat{\operatorname{post}}(w,\sigma_m)$ 重标，其中 $\sigma_m$ 是从路径起点到 $m$ 的前缀。只要精化路径、删除子树和继续搜索都遵守区域结构的不变式，最终返回的未覆盖区域之并就一定覆盖真实可达状态。`LazyAbstraction` 只是把这个非确定性选择换成由反例驱动的确定性策略：只在出现错误候选时精化，只从 pivot 往后精化，只在需要时删除子树。
+`SymbReachRefine` 的意义在于：它先把“精化会改变树结构”这件事的正确性证明清楚。具体地说，精化一条路径时，算法选一个与路径起点区域 $r$ 等价但更精确的 $w$，然后对路径上的每个节点 $m$ 用 $\widehat{\operatorname{post}}(w,\sigma_m)$ 重标，其中 $\sigma_m$ 是从路径起点到 $m$ 的前缀。只要精化路径、删除子树和继续搜索都遵守区域结构的不变式，最终返回的未覆盖区域之并就一定覆盖真实可达状态。`LazyAbstraction` 只是把这个非确定性选择换成由反例驱动的确定性策略：只在出现抽象反例时精化，只从 pivot 往后精化，只在需要时删除子树。
 
 这也是为什么论文要分两层讲算法。第一层回答“精化后如何维护搜索结果”，第二层回答“什么时候、在哪里精化”。把两个问题分开，正确性证明和终止性证明都会清楚很多。
 
@@ -380,30 +531,32 @@ Algorithm 2 还留了一个 `keep_subtree` 选择。精化时既可以保留 piv
 
 在进入伪代码之前，先把锁例子的搜索过程压缩成四次快照。这样可以看到同一棵树是怎样一步步长出来的，而不是把论文的 Figure 3 到 Figure 8 当成六张互不相关的图。
 
-![图 6　同一棵搜索树的四次快照。① 初次搜索只跟踪 LOCK，产生一条经过位置 5 到 ERROR 的虚假路径；② 在 pivot 2 增加 new = old，位置 5 的退出边被筛掉，回边叶子被位置 2 覆盖；③ 右子树出现另一个虚假反例，需要 got_lock = 0；④ 两棵子树各自使用不同的支撑谓词，共同回边由位置 2 覆盖。](images/lazy-abstraction/search-evolution.png)
+![图 7　同一棵搜索树的四次快照。① 初次搜索只跟踪 LOCK，产生一条经过位置 5 到 ERROR 的虚假路径；② 在 pivot 2 增加 new = old，位置 5 的退出边被筛掉，回边叶子被位置 2 覆盖；③ 右子树出现另一个虚假反例，需要 got_lock = 0；④ 两棵子树各自使用不同的支撑谓词，共同回边由位置 2 覆盖。](images/lazy-abstraction/search-evolution.png)
 
 ### 5.3 主循环
 
 主循环可以写成下面的形式：
 
-```text title="LazyAbstraction：主循环" frame="code" mark={4,8}
+```pcode title="LazyAbstraction：主循环" frame="code" mark={4,8}
 while 仍有未处理节点:
-    取出一个未处理节点 n
-    if R_n 与错误区域 E 相交:
-        找到最老的、满足 R_n0 与 B_n0 相交的祖先 n0
-        if n0 是根: 返回真实错误路径
-        pivot = n0 的父节点
-        用 focus 从 pivot 提高局部精度
-        保留并重标 pivot 到 n 的路径，或删除 pivot 的后代
-        撤销 pivot 之后作出的覆盖标记，重新处理相关叶子
-    else if R_n 被 U 覆盖:
-        标记 n 为已覆盖
+    取出一个未处理节点 $n$
+    if $R_n$ 与错误区域 $E$ 相交:
+        找到最老的、满足 $R_{n_0}$ 与 $B_{n_0}$ 相交的祖先 $n_0$
+        if $n_0$ 是根: 返回真实错误路径
+        $pivot = n_0$ 的父节点
+        用 $\mathrm{focus}$ 从 $pivot$ 提高局部精度
+        保留并重标 $pivot$ 到 $n$ 的路径，或删除 $pivot$ 的后代
+        撤销 $pivot$ 之后作出的覆盖标记，重新处理相关叶子
+    else if $R_n$ 被 $U$ 覆盖:
+        标记 $n$ 为已覆盖
     else:
         展开抽象后继，把新节点加入树
-返回所有已标记、未被覆盖的节点区域之并 U
+返回所有已标记、未被覆盖的节点区域之并 $U$
 ```
 
-这段伪代码对应论文 Algorithm 2 的 1–27 行：第 4 行是错误候选，第 5 行找最老的、与坏区域相交的祖先，第 9 行取它的父节点作为 pivot，第 11 行调用 `focus`，第 12–18 行处理子树和 covered 标记，第 19–26 行是普通前向搜索。论文允许不同的搜索顺序，深度优先和广度优先都不影响正确性，但会影响性能。
+这段伪代码对应论文 Algorithm 2 的 1–27 行：第 4 行是抽象反例的终点，第 5 行找最老的、与坏区域相交的祖先，第 9 行取它的父节点作为 pivot，第 11 行调用 `focus`，第 12–18 行处理子树和 covered 标记，第 19–26 行是普通前向搜索。论文允许不同的搜索顺序，深度优先和广度优先都不影响正确性，但会影响性能。
+
+完整的两份算法伪代码放在 §5.4，行号与论文一致；这里保留压缩版，是为了先看清控制流。
 
 算法返回安全区域的依据是：令 $U$ 为它返回的区域并集。每个展开过的节点都计算过对具体后继的过近似；被覆盖的后继已经包含在 $U$ 中；覆盖失效时，相关叶子会重新参与搜索。这样，搜索结束时 $U$ 包含初态、对具体转移闭合，并与错误区域不相交。论文 Theorem 2 给出了两种终止结果的正确性：返回的错误路径在具体模型中可行，或者返回一个避开错误区域的可达状态过近似。
 
@@ -424,11 +577,90 @@ $$
 
 </details>
 
-![图 7　LazyAbstraction 的主循环。错误分支先用精确回推判断反例是否可行；虚假反例从 pivot 局部精化并撤销过期的覆盖标记；其余节点要么被覆盖，要么展开抽象后继。](images/lazy-abstraction/search-refine.png)
+![图 8　LazyAbstraction 的主循环。错误分支先用精确回推判断反例是否可行；虚假反例从 pivot 局部精化并撤销过期的覆盖标记；其余节点要么被覆盖，要么展开抽象后继。](images/lazy-abstraction/search-refine.png)
 
-### 5.4 正确性定理
+### 5.4 论文算法原文
 
-论文把正确性分成两个定理。Theorem 1 针对 `SymbReachRefine`：对任意初始区域 $r_0$，任意一次终止的执行都满足
+前面的主循环为了叙事做了压缩。真正引用 Algorithm 1、Algorithm 2 的行号时，还是需要看到完整伪代码。下面按论文的行号列出两份算法；输入里的区域结构、抽象结构和 `focus` 算子沿用前面的定义。
+
+**Algorithm 1：`SymbReachRefine(A, r0)`**
+
+```pcode title="Algorithm 1　SymbReachRefine" frame="code"
+create root $r$ labeled with $r_0$
+while there are unmarked nodes do
+    if choose() then
+        pick a path $n{:}r \to^* n_r{:}r_r$
+        let $w$ be a region with $w \equiv r$ and $w \sqsubseteq r$
+        for each node $m{:}u$ along the path $n{:}r \to^* n_r{:}r_r$ do
+            relabel $m$ by $\widehat{\mathrm{post}}(w, \sigma_m)$
+        for each covered marked leaf $m$ marked after $n$ do
+            unmark $m$
+    end
+    else if choose() then
+        pick a marked node $n$
+        remove the subtrees starting at the sons of $n$
+        for each covered marked leaf $m$ marked after $n$ do
+            unmark $m$
+        unmark $n$
+    end
+    else
+        pick an unmarked node $n{:}r$
+        if $r \sqsubseteq \bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$ then
+            mark $n$ as covered
+        else
+            for each label $l \in \Sigma$ do
+                $r' \leftarrow \widehat{\mathrm{post}}(r,l)$
+                if $r' \neq \bot$ then
+                    construct a son $n'{:}r'$ of $n$ and label the arc $n \xrightarrow{l} n'$
+            mark $n$ as uncovered
+    end
+return the region $\bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$
+```
+
+第 4–10 行是“精化一条路径”：选一个与路径起点等价但更精确的 $w$，沿路径重标节点，并撤销受影响的 covered 叶子。第 12–17 行是“删除子树”：选一个已标记节点，删掉它的儿子，并撤销受影响的 covered 叶子。第 19–28 行是普通前向搜索：未被覆盖的节点展开抽象后继，被覆盖的节点直接标记。
+
+**Algorithm 2：`LazyAbstraction(A, Φ, r0, ε)`**
+
+```pcode title="Algorithm 2　LazyAbstraction" frame="code"
+create root $r$ labeled with $r_0$
+while there are unmarked nodes do
+    pick an unmarked node $n{:}r$
+    if $r \cap \varepsilon \neq \bot$ then
+        let $n_r{:}r_r \to n{:}r$ be the oldest ancestor of $n$ with $\mathrm{pre}(\varepsilon, \sigma_r) \cap r_r \neq \bot$
+        if $n_r$ is the root then
+            return the error trace $\sigma_r$
+        else
+            let $n_{rr}{:}r_{rr} \to n_r{:}r_r$ be the father of $n_r$
+            let $v$ denote the time stamp of $n_{rr}$
+            relabel $n_{rr}$ by $w' = \Phi(r_r, \sigma_r, \varepsilon)$
+            if $\mathrm{keep\_subtree}(n_{rr})$ then
+                for each node $m{:}u$ along the path $n_r{:}r_r \to n{:}r$ do
+                    re-label $m$ by $\widehat{\mathrm{post}}(w', \sigma_{rr})$
+            else
+                remove the subtrees starting at the sons of $n_{rr}$ and unmark $n_{rr}$
+            for each covered marked leaf $m$ that was marked after $v$ do
+                unmark $m$
+    else if $r \sqsubseteq \bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$ then
+        mark $n$ as covered
+    else
+        for each label $l \in \Sigma$ do
+            $r' \leftarrow \widehat{\mathrm{post}}(r,l)$
+            if $r' \neq \bot$ then
+                construct a son $n'{:}r'$ of $n$ and label the arc $n \xrightarrow{l} n'$
+        mark $n$ as uncovered
+return the region $\bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$
+```
+
+第 4–18 行处理抽象反例。第 4 行判断当前节点是不是抽象反例的终点；第 5 行找最老的、与坏区域相交的祖先 $n_r$；第 6–7 行说明如果 $n_r$ 是根，整条路径可以具体化；第 9–11 行取父节点 $n_{rr}$ 作为 pivot，并用 $w'=\Phi(r_r,\sigma_r,\varepsilon)$ 重标它；第 12–18 行决定保留还是删除子树，并撤销过期的 covered 标记。第 19–26 行是普通前向搜索，第 27 行返回未覆盖区域的并。
+
+注意第 14 行的 $\sigma_{rr}$ 是从 $n_{rr}$ 到当前节点 $m$ 的路径前缀；伪代码里的 $w'$ 就是第 11 行 `focus` 返回的新区域。
+
+
+### 5.5 正确性定理
+
+论文把正确性分成两个定理。先说明记号：$\operatorname{Reach}_{\mathcal S}(X)$ 表示从状态集合 $X$ 出发，在转移系统 $\mathcal S$ 中经过有限步能够到达的所有状态；$\llbracket r_0\rrbracket$ 是初始区域对应的具体状态集合。
+
+Theorem 1 针对 `SymbReachRefine`：对任意初始区域 $r_0$，任意一次终止的执行都满足
 
 $$
 \operatorname{Reach}_{\mathcal S}(\llbracket r_0\rrbracket)
@@ -473,7 +705,7 @@ $$
 
 实现上用 BDD 保存布尔公式，便于得到规范化的析取范式，也方便做布尔运算和包含检查。定理证明方面，Simplify 负责抽象后继计算中的蕴含检查和反例分析中的空性检查，Vampyre 负责为 `focus` 生成不可满足性证明。定理证明器的查询结果会被缓存；对未受当前语句影响的谓词，也可以省去一部分查询。论文中的实现用显式栈处理过程调用，不支持递归，并简化了指针算术。
 
-![图 8　BLAST 的实现管线。C-Breeze 把 C 程序转成 CFA；符号区域由数据区域、原子区域和区域集合组成，控制位置与调用栈显式建模；搜索与证明层用 BDD 存布尔公式，用 Simplify 做蕴含与空性检查，用 Vampyre 为 focus 生成证明。](images/lazy-abstraction/blast-pipeline.png)
+![图 9　BLAST 的实现管线。C-Breeze 把 C 程序转成 CFA；符号区域由数据区域、原子区域和区域集合组成，控制位置与调用栈显式建模；搜索与证明层用 BDD 存布尔公式，用 Simplify 做蕴含与空性检查，用 Vampyre 为 focus 生成证明。](images/lazy-abstraction/blast-pipeline.png)
 
 ### 6.2 实验
 
@@ -541,7 +773,7 @@ $$
 
 如果精化时直接删除 pivot 下面的整棵子树，再从 pivot 重新搜索，这个特定的循环就被打断了。因此 `keep_subtree` 不影响正确性，但会影响终止性。这也是论文的一个设计取舍：尽可能复用已有计算结果，和避免无限精化循环之间存在张力。
 
-![图 9　终止性的边界。左侧是两个充分条件：有限迹等价与升链条件；中间是保留子树时的精化循环；右侧是有限谓词抽象问题的不可判定性，以及 Lazy Abstraction 作为半算法的三种可能结果。](images/lazy-abstraction/termination-limits.png)
+![图 10　终止性的边界。左侧是两个充分条件：有限迹等价与升链条件；中间是保留子树时的精化循环；右侧是有限谓词抽象问题的不可判定性，以及 Lazy Abstraction 作为半算法的三种可能结果。](images/lazy-abstraction/termination-limits.png)
 
 ### 7.3 有限谓词抽象是不可判定的
 

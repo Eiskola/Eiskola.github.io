@@ -239,6 +239,26 @@ int c = 3;
 
 多个折叠范围用逗号分隔，例如 `collapse={2-4,8-10}`。折叠摘要默认会按代码的最小缩进对齐，设置 `collapsePreserveIndent=false` 可以关闭这一行为。
 
+### 富文本伪代码（pcode）
+
+`pcode` 用于伪代码、算法和需要数学记号但普通 `text` 代码块无法表达的文本。它保留 Expressive Code 的框架、行号、`mark`、折叠和复制按钮，同时把 `$...$` 中的内容交给 KaTeX 渲染：
+
+````markdown
+```pcode title="Algorithm 1　SymbReachRefine" frame="code" mark={4}
+create root $r$ labeled with $r_0$
+while there are unmarked nodes do
+    let $w$ be a region with $w \equiv r$ and $w \sqsubseteq r$
+    relabel $m$ by $\widehat{\mathrm{post}}(w, \sigma_m)$
+return the region $\bigcup\{u \mid m{:}u \text{ is an uncovered marked node}\}$
+```
+````
+
+- 普通西文使用 Times New Roman，中文使用正文的宋体；`$...$` 中的公式使用 KaTeX 字体。下标、帽子、集合运算符等不再依赖系统字体是否齐全。
+- 数学部分使用 LaTeX 语法，例如 `\sigma_m`、`\sqsubseteq`、`\bigcup`、`\widehat{\mathrm{post}}`。
+- `title`、`frame`、`mark`、`showLineNumbers`、`wrap` 等代码块选项仍然可用。
+- 需要显示美元符号本身时使用 `\$`；`pcode` 按纯文本处理，不启用语法高亮。
+- 复制按钮复制的是包含 `$...$` 的原始文本，方便继续编辑。
+
 ## 数学公式
 
 使用 KaTeX 渲染。`$...$` 是行内公式，`$$...$$` 是块级公式：

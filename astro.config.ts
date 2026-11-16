@@ -10,6 +10,7 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import { siteConfig, codeBlock } from "./src/config";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge";
+import { pluginMathText } from "./src/plugins/expressive-code/math-text";
 import { rehypeImageCaption } from "./src/plugins/rehype-image-caption";
 import { remarkAdmonition } from "./src/plugins/remark-admonition";
 import { remarkFootnotes } from "./src/plugins/remark-footnotes";
@@ -35,10 +36,16 @@ export default defineConfig({
     sitemap(),
     expressiveCode({
       themes: [codeBlock.theme],
+      shiki: {
+        // `pcode` is rendered as plain text by Expressive Code; the math-text
+        // plugin replaces its `$...$` spans with KaTeX output.
+        langAlias: { pcode: "text" },
+      },
       plugins: [
         pluginCollapsibleSections(),
         pluginLineNumbers(),
         pluginLanguageBadge(),
+        pluginMathText(),
       ],
       defaultProps: {
         wrap: codeBlock.wrap,
