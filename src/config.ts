@@ -46,9 +46,8 @@ export const appearance = {
   fonts: {
     // 正文西文使用 Times New Roman，中文保持宋体。
     body: '"Times New Roman", Times, "Noto Serif CJK SC", serif',
-    // 标题西文同样使用 Times New Roman，中文使用黑体。
-    heading:
-      '"Times New Roman", Times, "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", SimHei, sans-serif',
+    // 标题西文使用 Times New Roman，中文使用系统默认的 Noto Sans CJK SC。
+    heading: '"Times New Roman", Times, "Noto Sans CJK SC", sans-serif',
     // 拉丁字符和符号使用 JetBrains Mono；中文回退到正文字体。
     mono: '"JetBrains Mono", "Fira Code", "Cascadia Code", "Noto Serif CJK SC", "Noto Sans Math", "Segoe UI Symbol", "Apple Symbols", serif',
   },
