@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { siteConfig } from "../config";
 
 interface Props {
   posts: CollectionEntry<"posts">[];
@@ -14,7 +15,7 @@ const { posts } = Astro.props;
       <a href={`/posts/${post.id}`} class="post-link">
         <span class="post-title">{post.data.title}</span>
         <time class="post-date" datetime={post.data.published.toISOString()}>
-          {post.data.published.toLocaleDateString("zh-CN", {
+          {post.data.published.toLocaleDateString(siteConfig.dateLocale, {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",

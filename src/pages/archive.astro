@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config";
 
 const allPosts = await getCollection("posts");
 const posts = allPosts
@@ -37,7 +38,7 @@ const tags = [...tagMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
           {byYear[year].map((post) => (
             <li>
               <time datetime={post.data.published.toISOString()}>
-                {post.data.published.toLocaleDateString("zh-CN", {
+                {post.data.published.toLocaleDateString(siteConfig.dateLocale, {
                   month: "2-digit",
                   day: "2-digit",
                 })}

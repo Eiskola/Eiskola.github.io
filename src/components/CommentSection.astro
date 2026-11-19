@@ -2,7 +2,11 @@
 import { giscus } from "../config";
 ---
 
-<div class="comments-section" id="comments">
+<div
+  class="comments-section"
+  id="comments"
+  data-giscus-theme-path={giscus.themePath}
+>
   <h2 class="comments-heading">Comments</h2>
   <div class="giscus"></div>
 </div>
@@ -31,15 +35,26 @@ import { giscus } from "../config";
 -->
 <script is:inline>
   (function () {
+    var section = document.getElementById("comments");
+    var basePath = (section && section.getAttribute("data-giscus-theme-path")) || "/giscus";
+    basePath = basePath.replace(/\/$/, "");
     var theme = document.documentElement.getAttribute("data-theme") || "light";
     var s = document.getElementById("giscus-script");
-    if (s) s.setAttribute("data-theme", location.origin + "/giscus/" + theme + ".css");
+    if (s) s.setAttribute("data-theme", location.origin + basePath + "/" + theme + ".css");
   })();
 </script>
 
 <script>
+  const themeBasePath = (
+    document.getElementById("comments")?.getAttribute("data-giscus-theme-path") || "/giscus"
+  ).replace(/\/$/, "");
+
   function detectTheme(): string {
     return document.documentElement.getAttribute("data-theme") || "light";
+  }
+
+  function themeUrl(theme: string): string {
+    return location.origin + themeBasePath + "/" + theme + ".css";
   }
 
   function sendTheme(): void {
@@ -49,7 +64,7 @@ import { giscus } from "../config";
     if (!iframe?.contentWindow) return;
     var theme = detectTheme();
     iframe.contentWindow.postMessage(
-      { giscus: { setConfig: { theme: location.origin + "/giscus/" + theme + ".css" } } },
+      { giscus: { setConfig: { theme: themeUrl(theme) } } },
       "https://giscus.app",
     );
   }

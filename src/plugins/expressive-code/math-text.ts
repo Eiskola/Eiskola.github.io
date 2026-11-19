@@ -113,34 +113,41 @@ class MathLineAnnotation extends ExpressiveCodeAnnotation {
   }
 }
 
+export interface MathTextPluginOptions {
+  fontFamily: string;
+  fontWeight: string;
+  fontSize: string;
+  mobileFontSize: string;
+  mobilePaddingInline: string;
+}
+
 /**
  * Adds a `pcode` fenced code block language that renders `$...$` spans with
  * KaTeX while keeping Expressive Code's frame, line numbers, marks and copy
  * button. This is intended for pseudocode and other text where plain `text`
  * blocks cannot express subscripts, hats, set operators, etc.
  */
-export function pluginMathText() {
+export function pluginMathText(options: MathTextPluginOptions) {
   return definePlugin({
     name: "Math text",
     baseStyles: () => `
       /* pcode prose uses a paper-like serif; KaTeX keeps its own math font. */
       pre[data-language="pcode"] > code {
-        font-family: "Times New Roman", Times, "Noto Serif CJK SC", serif;
-        /* Keep pcode at Medium even though regular code blocks are bolder. */
-        font-weight: 500;
+        font-family: ${options.fontFamily};
+        font-weight: ${options.fontWeight};
       }
 
       /* Slightly larger than regular code blocks for long-form pseudocode. */
       pre[data-language="pcode"] {
-        --ec-codeFontSize: 0.95rem;
+        --ec-codeFontSize: ${options.fontSize};
       }
 
       /* On narrow screens, use a smaller step up and trim the horizontal
          padding so long pseudocode lines fit without page overflow. */
       @media (max-width: 640px) {
         pre[data-language="pcode"] {
-          --ec-codeFontSize: 0.9rem;
-          --ec-codePadInl: 0.7rem;
+          --ec-codeFontSize: ${options.mobileFontSize};
+          --ec-codePadInl: ${options.mobilePaddingInline};
         }
       }
 

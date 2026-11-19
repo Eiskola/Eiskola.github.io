@@ -1,11 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { searchConfig } from "../config";
 ---
 
 <BaseLayout pageTitle="Search">
   <div class="search-page">
     <h1>Search</h1>
-    <div id="search" class="search-box"></div>
+    <div
+      id="search"
+      class="search-box"
+      data-placeholder={searchConfig.placeholder}
+      data-show-images={String(searchConfig.showImages)}
+    ></div>
   </div>
 </BaseLayout>
 
@@ -32,13 +38,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       var s = document.createElement("script");
       s.src = "/pagefind/pagefind-ui.js";
       s.onload = function () {
+        var el = document.getElementById("search");
         // @ts-ignore
         new PagefindUI({
           element: "#search",
           baseUrl: "/",
-          showImages: false,
+          showImages: el?.dataset.showImages === "true",
           translations: {
-            placeholder: "搜点什么吧，虽然笔记可能还没写…",
+            placeholder: el?.dataset.placeholder || "Search…",
           },
         });
       };

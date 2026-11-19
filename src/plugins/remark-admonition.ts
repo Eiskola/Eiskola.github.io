@@ -1,54 +1,96 @@
-import type { Root, Paragraph, Text } from "mdast";
+import type { Paragraph, Root, RootContent } from "mdast";
 import { visit } from "unist-util-visit";
 
 const TYPES = ["note", "tip", "important", "caution", "warning"] as const;
+type AdmonitionType = (typeof TYPES)[number];
+
+/**
+ * `remark-directive` adds this mdast node type at runtime. Define it locally
+ * instead of relying on module augmentation so the plugin also works with
+ * checkers that only load the project's source files.
+ */
+interface ContainerDirectiveNode {
+  type: "containerDirective";
+  name: string;
+  data?: ParagraphDataWithHast;
+  children: RootContent[];
+}
+
+interface DirectiveData {
+  hName?: string;
+  hProperties?: Record<string, unknown>;
+  directiveLabel?: boolean;
+}
+
+type ParagraphDataWithHast = NonNullable<Paragraph["data"]> & DirectiveData;
+
+function isAdmonitionType(name: string): name is AdmonitionType {
+  return (TYPES as readonly string[]).includes(name);
+}
+
+function asContainerDirective(node: unknown): ContainerDirectiveNode | undefined {
+  if (
+    typeof node === "object" &&
+    node !== null &&
+    (node as { type?: unknown }).type === "containerDirective"
+  ) {
+    return node as ContainerDirectiveNode;
+  }
+  return undefined;
+}
 
 function makeTitleParagraph(text: string): Paragraph {
+  const data: ParagraphDataWithHast = {
+    hName: "span",
+    hProperties: { class: "adm-title" },
+  };
+
   return {
     type: "paragraph",
-    children: [
-      {
-        type: "text",
-        value: text,
-      } as Text,
-    ],
-    data: {
-      hName: "span",
-      hProperties: { class: "adm-title" },
-    },
+    children: [{ type: "text", value: text }],
+    data,
   };
 }
 
 export function remarkAdmonition() {
   return (tree: Root) => {
-    visit(tree, "containerDirective", (node) => {
-      const type = node.name;
-      if (!TYPES.includes(type as any)) return;
+    visit(tree, (node) => {
+      const directive = asContainerDirective(node);
+      if (!directive) return;
 
-      const data = node.data || (node.data = {});
-      const first = node.children[0];
+      const type = directive.name.toLowerCase();
+      if (!isAdmonitionType(type)) return;
+
+      const first = directive.children[0];
+      const labelData =
+        first?.type === "paragraph"
+          ? (first.data as ParagraphDataWithHast | undefined)
+          : undefined;
 
       // remark-directive turns a container label like `:::note[标题]` into a
       // paragraph with `data.directiveLabel = true`. Reuse it as the title so
       // that inline formatting inside the label is preserved.
-      if (
-        first?.type === "paragraph" &&
-        (first.data as { directiveLabel?: boolean } | undefined)?.directiveLabel
-      ) {
+      if (labelData?.directiveLabel) {
         first.data = {
           ...first.data,
           hName: "span",
-          hProperties: { class: "adm-title" },
-        };
-        node.children = [first, ...node.children.slice(1)];
+          hProperties: {
+            ...labelData.hProperties,
+            class: "adm-title",
+          },
+        } as ParagraphDataWithHast;
       } else {
-        // Prepend the default title paragraph to children
-        node.children = [makeTitleParagraph(type.toUpperCase()), ...node.children];
+        // Insert a default title before the directive's content.
+        directive.children.unshift(makeTitleParagraph(type.toUpperCase()));
       }
 
-      // Set hast rendering info
+      // Set hast rendering info on the container itself.
+      const data = directive.data ?? (directive.data = {});
       data.hName = "blockquote";
-      data.hProperties = { class: `adm adm-${type}` };
+      data.hProperties = {
+        ...data.hProperties,
+        class: `adm adm-${type}`,
+      };
     });
   };
 }

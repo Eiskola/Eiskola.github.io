@@ -4,6 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import CommentSection from "../../components/CommentSection.astro";
+import { postConfig, siteConfig } from "../../config";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -18,9 +19,9 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 
-// Reading time: ~400 chars/min for mixed Chinese/English
+// Reading time: characters per minute from config
 const charCount = (post.body || "").replace(/\s+/g, "").length;
-const readingTime = Math.max(1, Math.round(charCount / 400));
+const readingTime = Math.max(1, Math.round(charCount / postConfig.readingSpeed));
 
 // Build sorted post list for prev/next navigation
 const allPosts = (await getCollection("posts"))
@@ -30,7 +31,7 @@ const currentIdx = allPosts.findIndex((p) => p.id === post.id);
 const prevPost = currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null;
 const nextPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null;
 
-// Related posts by tag overlap (max 3)
+// Related posts by tag overlap
 const relatedPosts = allPosts
   .filter((p) => p.id !== post.id)
   .map((p) => ({
@@ -39,7 +40,7 @@ const relatedPosts = allPosts
   }))
   .filter((r) => r.overlap > 0)
   .sort((a, b) => b.overlap - a.overlap)
-  .slice(0, 3)
+  .slice(0, postConfig.relatedPostsLimit)
   .map((r) => r.post);
 ---
 
@@ -50,7 +51,7 @@ const relatedPosts = allPosts
         <h1>{post.data.title}</h1>
         <div class="post-meta">
           <time datetime={post.data.published.toISOString()}>
-            {post.data.published.toLocaleDateString("zh-CN", {
+            {post.data.published.toLocaleDateString(siteConfig.dateLocale, {
               year: "numeric",
               month: "2-digit",
               day: "2-digit",
@@ -58,7 +59,7 @@ const relatedPosts = allPosts
           </time>
           {post.data.updated && (
             <span class="post-updated">
-              updated {post.data.updated.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })}
+              updated {post.data.updated.toLocaleDateString(siteConfig.dateLocale, { year: "numeric", month: "2-digit", day: "2-digit" })}
             </span>
           )}
           <span class="post-reading-time">{readingTime} min read</span>

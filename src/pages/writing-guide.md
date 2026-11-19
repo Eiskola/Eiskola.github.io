@@ -98,11 +98,13 @@ auto matcher = clang::ast_matchers::functionDecl().bind("fn");
 
 Expressive Code 会自动完成：
 
-- Shiki 语法高亮（主题为 `github-light`，深色模式会自动适配）
+- Shiki 语法高亮（主题为 `github-light`，可在 `src/config.ts` 的 `codeBlock.theme` 中调整，深色模式会自动适配）
 - 行号显示（默认开启；`bash`、`sh`、`shellsession` 默认关闭）
 - 右上角复制按钮（终端框架复制时会自动去掉 `#` 开头的注释行）
 - 无标题且非终端框架时，右上角显示语言徽章（悬停时隐藏）
 - 自动换行（默认开启，可关闭）
+
+代码块的字体、字号、行高、字重、边框和标记颜色统一由 `src/config.ts` 的 `codeBlock` 配置；普通代码和 `pcode` 伪代码可以分别设置。
 
 ### 代码块选项
 
@@ -187,7 +189,7 @@ int c = 3;
 ```
 ````
 
-`ins` 和 `del` 同样支持 `{"标签":行范围}` 写法。标记颜色由 `astro.config.ts` 中的 `styleOverrides.textMarkers` 控制；深色模式下代码区会整体反色适配。
+`ins` 和 `del` 同样支持 `{"标签":行范围}` 写法。标记颜色由 `src/config.ts` 中的 `codeBlock.textMarkers` 控制（默认复用主题色板）；深色模式下代码区会整体反色适配。
 
 ### Diff 代码块
 
@@ -428,9 +430,9 @@ Astro 会在构建时处理本地图片并生成优化后的资源；远程图�
 |---|---|
 | 右侧目录 | 文章页自动提取 `h1`–`h3`，可通过 `src/config.ts` 的 `tocConfig` 调整范围 |
 | 标题锚点 | 文章页标题自动生成 id；悬停显示 `#`，点击跳转到对应小节 |
-| 阅读时间 | 按正文去空白字符数除以 400 估算（最少 1 分钟），显示在发布日期旁 |
+| 阅读时间 | 按正文去空白字符数除以 `postConfig.readingSpeed` 估算（默认 400，最少 1 分钟），显示在发布日期旁 |
 | 上一篇 / 下一篇 | 按 `published` 日期排序自动生成 |
-| 相关文章 | 按共享 `tags` 数量选取最多 3 篇 |
+| 相关文章 | 按共享 `tags` 数量选取最多 `postConfig.relatedPostsLimit` 篇（默认 3 篇） |
 | 评论 | 文章底部自动加载 Giscus，按页面路径关联讨论 |
 | 搜索 | 构建时通过 Pagefind 生成全文索引 |
 | RSS | `/rss.xml` 自动生成，`description` 作为摘要，草稿会被排除 |
