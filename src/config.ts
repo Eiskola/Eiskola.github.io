@@ -44,10 +44,10 @@ export const appearance = {
   mobileFontSize: "15px", // 移动端基础字号
   lineHeight: 1.8, // 正文行高
   fonts: {
-    // 正文西文使用 Times New Roman，中文保持宋体。
+    // 正文字体
     body: '"Times New Roman", Times, "Noto Serif CJK SC", serif',
-    // 标题西文使用 Times New Roman，中文使用系统默认的 Noto Sans CJK SC。
-    heading: '"Times New Roman", Times, "Noto Sans CJK SC", sans-serif',
+    // 标题字体
+    heading: '"Times New Roman", Times, "Maple Mono NF CN", sans-serif',
     // 拉丁字符和符号使用 JetBrains Mono；中文回退到正文字体。
     mono: '"JetBrains Mono", "Fira Code", "Cascadia Code", "Noto Serif CJK SC", "Noto Sans Math", "Segoe UI Symbol", "Apple Symbols", serif',
   },

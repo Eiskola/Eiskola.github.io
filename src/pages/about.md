@@ -3,13 +3,13 @@ layout: ../layouts/MarkdownLayout.astro
 title: Eiskola.
 ---
 
-硕士，关注编程语言、编译器、程序分析等领域。
+关注编程语言、编译器、程序分析等领域。
 
 ## 研究方向
 
 - 编译器基础设施（LLVM、Clang）
 - 编程语言理论与实现
-- 静态分析与形式化方法
+- 程序验证与分析
 
 ## 链接
 
